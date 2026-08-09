@@ -39,14 +39,16 @@ def main() -> int:
     for row in read_rows(Path(sys.argv[1])):
         if not row.get("invalid", False):
             groups[str(row.get("arm", "unknown"))].append(row)
-    print("arm\tpass_rate\tmedian_wall_s\tmedian_total_tokens\tmedian_cost_usd")
+    print("arm\tpass_rate\tsuccessful_tasks\tmedian_wall_s\ttotal_cost_usd\tcost_per_success_usd\tmedian_total_tokens")
     for arm, rows in sorted(groups.items()):
         passed = sum(row.get("status") == "pass" for row in rows)
         wall = [float(row["wall_clock_seconds"]) for row in rows if row.get("wall_clock_seconds") is not None]
         tokens = [float(row["total_tokens"]) for row in rows if row.get("total_tokens") is not None]
         cost = [float(row["cost_usd"]) for row in rows if row.get("cost_usd") is not None]
         rate = passed / len(rows) if rows else 0.0
-        print(f"{arm}\t{rate:.3f}\t{median(wall)}\t{median(tokens)}\t{median(cost)}")
+        total_cost = sum(cost) if cost else None
+        cost_per_success = total_cost / passed if total_cost is not None and passed else None
+        print(f"{arm}\t{rate:.3f}\t{passed}\t{median(wall)}\t{total_cost}\t{cost_per_success}\t{median(tokens)}")
     return 0
 
 

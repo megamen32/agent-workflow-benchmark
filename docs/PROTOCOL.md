@@ -47,6 +47,20 @@ absent, not synthesized. A harness adapter must expose declared model overrides
 when the workflow supports them. Passing only one model to an outer CLI is not
 evidence that a multi-tier topology was exercised.
 
+## Reproducibility boundary
+
+The adapter, harness CLI, runtime dependencies, and verifier execute inside a
+Docker image pinned by immutable digest. A manifest without
+`environment.container_runtime.engine: docker`, `pull_policy: never`, and an
+arm-level `container.image` ending in `@sha256:<64 hex>` is invalid.
+
+The host runner is deliberately thin: it creates the isolated run directory,
+mounts `/workspace` and `/artifacts`, starts the pinned image, and collects the
+receipt. It must not execute the agent or acceptance command directly on the
+host, silently pull a mutable tag, or reuse a host home/configuration. The
+container image, digest, platform, network mode, command, manifest hash, and
+Docker version are recorded in the run receipt.
+
 ## Ranking priorities
 
 Quality and price are the primary dimensions. Report quality as pass rate,

@@ -1,0 +1,62 @@
+# Unified Docker runner
+
+The executable boundary is `scripts/run_campaign.py`. The input is one YAML
+manifest containing the campaign, arms, scenarios, fixtures, acceptance
+commands, topology, pricing policy, and pinned containers.
+
+## Mandatory reproducibility fields
+
+Every manifest must declare:
+
+```yaml
+environment:
+  container_runtime:
+    engine: docker
+    pull_policy: never
+
+arms:
+  - harness: codex  # or opencode
+    container:
+      image: registry.example/harness:version@sha256:<64-hex-digest>
+      digest: sha256:<same-64-hex-digest>
+```
+
+The loader rejects mutable tags, missing digests, mismatched digests, missing
+Docker runtime declaration, mixed Codex/OpenCode levels inside one arm, and
+topologies with more than three levels.
+
+Before each attempt the runner proves that the exact image digest exists in the
+local Docker cache. It uses `docker run --pull never`, mounts only the isolated
+`/workspace` and `/artifacts`, defaults to `--network none`, and records the
+Docker Engine version plus image `RepoDigests` in `container-preflight.json`.
+The agent and acceptance verifier both run in that same image. Nothing from the
+host harness binary, host home, or host-side verifier is used.
+
+## Run modes
+
+```bash
+python3 scripts/run_campaign.py configs/manifest.example.yaml --dry-run
+python3 scripts/run_campaign.py configs/manifest.docker-smoke.yaml \
+  --output /tmp/agent-workflow-smoke
+```
+
+The smoke manifest uses a real locally cached digest and a Node fixture command;
+it verifies container isolation and receipt/archive behavior, not model quality.
+
+## Outputs
+
+Each campaign output contains `results.jsonl`, `summary.json`, one
+`campaign-transcripts.tar.zst`, and its SHA-256. The archive has exactly two
+members: `campaign-manifest.json` and `transcripts.jsonl`. The transcript starts
+with the user prompt, then preserves JSONL harness events in order. API keys,
+Bearer values, cookies, passwords, and other configured secret patterns are
+redacted before local event files and publication artifacts are written.
+
+Quality, total effective cost, cost per successful task, and wall-clock are
+reported separately. Tokens remain diagnostic. If there are zero successful
+tasks, `cost_per_success_usd` is `null`, never zero.
+
+The image digest makes the adapter/harness environment reproducible. Exact LLM
+output additionally depends on the declared provider route and its inference
+behavior; campaigns must record model ID, endpoint class, pricing basis, and
+repetition seed, and should publish the full transcript for audit.

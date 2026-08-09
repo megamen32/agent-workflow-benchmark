@@ -1,0 +1,70 @@
+manifest_version: 1
+
+# Uses the locally cached, registry-digested Node image only to verify the
+# Docker runner, volume contract, receipts, usage extraction, and archive.
+# It is not a model-quality benchmark.
+campaign:
+  name: docker-runner-smoke
+  scenario_track: product_outcome
+  scenario_repetitions: 1
+  model_selection:
+    unspecified_policy: declared
+    budget_profile: smoke
+  pricing:
+    preferred_basis: fixture
+    snapshot_date: 2026-08-09
+
+environment:
+  timeout_seconds: 60
+  container_runtime:
+    engine: docker
+    pull_policy: never
+
+arms:
+  - id: codex-container-smoke
+    harness: codex
+    container:
+      image: node@sha256:d649c27dae7ba0137b3cef5dd75baa422c08dc3d9e3fc0c23dfb172dc3cc6436
+      digest: sha256:d649c27dae7ba0137b3cef5dd75baa422c08dc3d9e3fc0c23dfb172dc3cc6436
+      platform: linux/amd64
+      network: none
+    topology:
+      levels:
+        - id: lead
+          roles: [lead]
+          harness: codex
+          model: fixture
+    adapter:
+      command:
+        - node
+        - -e
+        - |
+          console.log(JSON.stringify({type:"message",session_id:"smoke-session",usage:{prompt_tokens:3,completion_tokens:2,total_tokens:5},cost_usd:0.01}));
+          require("fs").writeFileSync("/workspace/answer.txt", "DONE\n");
+
+  - id: opencode-container-smoke
+    harness: opencode
+    container:
+      image: node@sha256:d649c27dae7ba0137b3cef5dd75baa422c08dc3d9e3fc0c23dfb172dc3cc6436
+      digest: sha256:d649c27dae7ba0137b3cef5dd75baa422c08dc3d9e3fc0c23dfb172dc3cc6436
+      platform: linux/amd64
+      network: none
+    topology:
+      levels:
+        - id: lead
+          roles: [lead]
+          harness: opencode
+          model: fixture
+    adapter:
+      command:
+        - node
+        - -e
+        - |
+          console.log(JSON.stringify({type:"message",session_id:"smoke-session",usage:{prompt_tokens:4,completion_tokens:3,total_tokens:7},cost_usd:0.02}));
+          require("fs").writeFileSync("/workspace/answer.txt", "DONE\n");
+
+scenarios:
+  - id: create-answer
+    prompt: create the answer file
+    acceptance:
+      command: [sh, -lc, "test \"$(cat /workspace/answer.txt)\" = DONE"]

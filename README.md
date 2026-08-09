@@ -55,11 +55,24 @@ product-outcome задачи идут отдельным треком.
 В git хранится manifest с хэшами, а сжатые JSONL-транскрипты — в release
 assets; перед публикацией они проходят secret/privacy redaction.
 
+Исполняемый runner принимает [unified manifest](configs/manifest.example.yaml).
+Codex и OpenCode запускаются только внутри arm-specific Docker images,
+зафиксированных digest'ом; verifier запускается в том же контейнере. Mutable
+tags, host-side harness execution и host-side acceptance checks запрещены.
+
+```bash
+python3 scripts/run_campaign.py configs/manifest.example.yaml --dry-run
+python3 scripts/run_campaign.py configs/manifest.example.yaml --output results/example
+```
+
+Перед реальным запуском замените примерные image/digest на существующие локально
+закэшированные образы; runner использует `docker --pull never`.
+
 ```bash
 python3 scripts/summarize_results.py results.jsonl
 ```
 
-См. [протокол](docs/PROTOCOL.md), [конфигурацию](configs/campaign.yaml) и
+См. [протокол](docs/PROTOCOL.md), [runner contract](docs/RUNNER.md), [unified manifest](configs/manifest.example.yaml) и
 [схему результата](docs/RESULT_SCHEMA.md).
 
 MIT — [LICENSE](LICENSE).

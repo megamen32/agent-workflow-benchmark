@@ -11,6 +11,14 @@ Each line in the result file is one completed scenario attempt:
   "scenario_track": "workflow_guard",
   "attempt": 1,
   "harness": "opencode",
+  "container": {
+    "runtime": "docker",
+    "image": "ghcr.io/example/opencode-harness:2026-08-09@sha256:<digest>",
+    "digest": "sha256:<digest>",
+    "platform": "linux/amd64",
+    "engine_version": "29.7.0",
+    "network": "none"
+  },
   "topology": {
     "levels": [
       {"id": "mentor", "roles": ["adviser"], "model": "configured-adviser"},
@@ -23,6 +31,7 @@ Each line in the result file is one completed scenario attempt:
   "status": "pass",
   "successful_task": true,
   "wall_clock_seconds": 123.4,
+  "agent_wall_clock_seconds": 120.1,
   "input_tokens": 10000,
   "output_tokens": 2000,
   "total_tokens": 12000,
