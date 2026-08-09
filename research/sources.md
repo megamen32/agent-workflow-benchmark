@@ -18,6 +18,18 @@ not independent facts.
   — later audit reporting a high broken-task rate in SWE-bench Pro.
 - [SWE-rebench V2](https://arxiv.org/abs/2602.23866) — fresh,
   language-agnostic issue-resolution direction.
+- [SWE-bench-Live paper](https://openreview.net/pdf?id=OGWkr7gXka) — continuously
+  refreshed issues from recent repository activity.
+- [SWE-bench Multimodal](https://arxiv.org/abs/2410.03859) and
+  [Multi-SWE-bench](https://arxiv.org/abs/2504.02605) — visual/UI and
+  multilingual issue resolution.
+- [SWE-EVO](https://github.com/SWE-EVO/SWE-EVO) — long-horizon repository
+  evolution from software requirements.
+- [SWE-Explore-Bench](https://github.com/Qiushao-E/SWE-Explore-Bench) —
+  repository exploration/localization as a separate capability.
+- [Claw-SWE-Bench paper](https://arxiv.org/abs/2606.12344) and
+  [adapter implementation](https://github.com/opensquilla/claw-swe-bench) —
+  heterogeneous harness comparison, fixed runtime contract, and cost axis.
 - [Terminal-Bench 2.0 repository](https://github.com/harbor-framework/terminal-bench-2)
   and [paper](https://arxiv.org/abs/2601.11868) — hard terminal tasks in
   computer environments.
@@ -36,6 +48,14 @@ not independent facts.
 - [GAIA paper](https://arxiv.org/abs/2311.12983) — general assistant tasks.
 - [AgentBench repository](https://github.com/THUDM/AgentBench) — eight agent
   environments.
+- [TheAgentCompany repository](https://github.com/TheAgentCompany/TheAgentCompany)
+  — 175 simulated software-company tasks across applications, coding, and
+  coworker communication.
+- [AutomationBench](https://github.com/zapier/AutomationBench) — 600 simulated
+  business workflows across CRM, inbox, calendar, and other SaaS tools, with
+  programmatic state checks and cost-export support.
+- [Workspace-Bench](https://github.com/OpenDataBox/Workspace-Bench) — large
+  file-workspace dependency tasks.
 - [WebArena repository](https://github.com/web-arena-x/webarena) — functional,
   self-hosted web environment.
 - [OSWorld repository](https://github.com/xlang-ai/OSWorld) — real desktop/OS
@@ -51,6 +71,9 @@ not independent facts.
 - [MCP-Bench repository](https://github.com/Accenture/mcp-bench) and
   [paper](https://arxiv.org/abs/2508.20453) — 28 MCP servers, 250 tools,
   discovery, multi-hop use, and completion.
+- [MCP-Universe](https://github.com/SalesforceAIResearch/MCP-Universe) and
+  [paper](https://arxiv.org/abs/2508.14704) — unfamiliar real-world MCP
+  servers and long-horizon tool use.
 - [MCPMark documentation](https://mcpmark.ai/docs/introduction) and
   [repository](https://github.com/eval-sys/mcpmark) — cross-service MCP tasks,
   Docker runner, and service isolation guidance.
@@ -69,12 +92,21 @@ not independent facts.
   — requirement-driven SWE skill ablation. The GitHub URL reported by the
   paper search was unavailable during this audit, so the dataset link is the
   reproducible public source recorded here.
+- [SRA-Bench](https://github.com/oneal2000/SR-Agents) and
+  [paper](https://arxiv.org/abs/2604.24594) — skill retrieval, incorporation,
+  distractor resistance, and end-task execution.
 - [AI Workflow Benchmark](https://github.com/xmpuspus/ai-workflow-benchmark) —
   tool + workflow evaluation on real-repository tasks.
 - [Quorum / Superpowers Evals](https://github.com/prime-radiant-inc/superpowers-evals)
   — workflow-compliance/eval lab; not a neutral universal benchmark.
 - [Harness Bench](https://www.harness-bench.ai/) — harness configuration
   effects on sandboxed executable workflow tasks.
+- [ClawBench/shellbench](https://github.com/openclaw/shellbench) — full-stack
+  trace scoring, reliability regimes, configuration diagnostics, token/time
+  accounting, and an interchange trace format. Treat its trajectory/behavior
+  axes as diagnostics until independently validated against business outcomes.
+- [CUBE harness](https://github.com/The-AI-Alliance/cube-harness) — alpha
+  benchmark-agnostic runtime and trajectory protocol, not a task benchmark.
 - [Superpowers](https://github.com/obra/superpowers) and
   [ECC](https://github.com/affaan-m/ECC) — surveyed workflow projects; their
   existence or popularity is not evidence of a shared neutral benchmark.
@@ -102,6 +134,30 @@ not independent facts.
   and knowledge/execution axes.
 - [MemGUI-Bench](https://lgy0404.github.io/MemGUI-Bench/) — mobile GUI memory
   and cross-app workflows.
+- [AIRS-Bench](https://github.com/facebookresearch/airs-bench) — 20 ML research
+  tasks with executable metric comparison against published SOTA.
+- [DeepSearchQA](https://arxiv.org/abs/2601.20975) — 900 difficult multi-step
+  information-seeking tasks.
+- [AutoResearchBench](https://arxiv.org/abs/2604.25256) — deep and wide
+  scientific literature discovery.
+
+## Fresh discovery sources and secondary material
+
+These were used to discover candidates, not as the authority for benchmark
+scores:
+
+- [Habr: benchmarking AI agents on real tasks](https://habr.com/ru/articles/886198/)
+  — broad Russian overview of tool interaction and real-task evaluation.
+- [Habr: why agents cheat in CI/CD](https://habr.com/ru/articles/1019634/)
+  — useful behavioral failure cases, but an adversarial article is not a
+  standardized benchmark.
+- [Habr: evaluating agents in production](https://habr.com/ru/articles/1040756/)
+  — practical distinction between benchmark scores and real production
+  traces/checks.
+- [GitHub agent-harness survey](https://github.com/Picrew/awesome-agent-harness)
+  — discovery index, not evidence of benchmark validity.
+- [GitHub agent-skill survey](https://github.com/Cassie07/AgentSkill_Survey)
+  — discovery index for SkillsBench, SRA-Bench, and related work.
 
 ## Pricing and reproducibility
 

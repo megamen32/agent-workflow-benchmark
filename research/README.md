@@ -78,6 +78,40 @@ selection but cannot replace either of the two classes above.
    triggered more agents, checks, or tokens. Their product result must be
    reported separately from workflow compliance.
 
+## Result of the fresh GitHub/web/Habr sweep
+
+The first pass was not exhaustive. A second search over current GitHub
+repositories, recent papers, project sites, and Russian practitioner coverage
+found several important additions:
+
+- **Closest to the harness question:** [Claw-SWE-Bench](https://github.com/opensquilla/claw-swe-bench)
+  fixes a prompt/runtime/workspace/patch contract across heterogeneous claws;
+  its paper explicitly reports harness variance and total API cost.
+- **Closest to the full-stack economics question:**
+  [ClawBench/shellbench](https://github.com/openclaw/shellbench) records model,
+  plugin, harness, trace, token, time, artifacts, and reliability regimes.
+  Its trajectory/behavior score is still a diagnostic and must not replace
+  completion or cost-per-success.
+- **Closest to business outcomes:** [AutomationBench](https://github.com/zapier/AutomationBench)
+  and [TheAgentCompany](https://github.com/TheAgentCompany/TheAgentCompany)
+  leave simulated CRM/company worlds in a checked state after multi-application
+  work.
+- **Closest to real long-horizon coding:** [SWE-EVO](https://github.com/SWE-EVO/SWE-EVO),
+  [SWE-bench-Live](https://openreview.net/pdf?id=OGWkr7gXka), and
+  [Multi-SWE-bench](https://arxiv.org/abs/2504.02605).
+- **Closest to skill routing:** [SRA-Bench](https://github.com/oneal2000/SR-Agents)
+  tests retrieving and applying the right skill among distractors, which is a
+  different problem from SkillsBench's skill-present/skill-absent ablation.
+- **Closest to the MCP problem:** [MCP-Universe](https://github.com/SalesforceAIResearch/MCP-Universe)
+  adds large unfamiliar tool spaces and long-horizon composition to MCP
+  evaluation.
+
+So the answer is **not “there are no other benchmarks”**. There are many more;
+the actual shortage is a neutral, open benchmark that simultaneously allows an
+arbitrary model topology, measures end-user outcome, captures real cost/time,
+and publishes auditable traces. The new candidates are now included in the
+catalogue with explicit validity and openness caveats.
+
 ## What should be reported
 
 Do not compress everything into one score by default. Publish two primary
