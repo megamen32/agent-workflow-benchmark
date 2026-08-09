@@ -1,4 +1,4 @@
-# LHC Codex pilot: L0 vs L1
+# [LastHumanCommit](https://github.com/megamen32/LastHumanCommit) Codex pilot: L0 vs L1
 
 This is the first pilot of the public protocol. It compares five neutral
 Quorum scenarios in Docker with Codex as the coding harness. Superpowers was
@@ -18,7 +18,8 @@ that every native Codex child used the declared Worker model. Therefore these
 results are a valid workflow/harness pilot, but not yet a final claim about the
 complete five-role model topology.
 
-The canonical LHC role hints behind the two arms are Adviser=`5.6-sol`,
+The canonical [LastHumanCommit](https://github.com/megamen32/LastHumanCommit)
+role hints behind the two arms are Adviser=`5.6-sol`,
 Overseer=`5.6-terra`, and Critic=`5.6-terra`; this pilot did not invoke a
 separate Sol generation. L0 is Lead Luna → Worker GPT-5.4 Mini, and L1 is
 Lead MiniMax M3 → Worker MiniMax M2.7. These are two complete Lead→Worker

@@ -50,7 +50,8 @@ behavioral benchmark, но не нейтральный абсолют: его co
 
 [AI Workflow Benchmark](https://github.com/xmpuspus/ai-workflow-benchmark)
 измеряет не только capability модели, а связку coding tool + workflow на
-реальных repository-задачах. Он нужен как независимая проверка, чтобы LHC не
+реальных repository-задачах. Он нужен как независимая проверка, чтобы
+[LastHumanCommit](https://github.com/megamen32/LastHumanCommit) не
 выигрывал только потому, что мы выбрали тесты, выросшие из Superpowers.
 
 Ограничение фиксируем заранее: его корпус и технологический профиль уже не
@@ -64,7 +65,8 @@ skill, с curated skill и с самостоятельно созданным sk
 эталонным решением и verifier.
 
 Мы берём его не для общего рейтинга workflow, а для конкретного вопроса: стало
-ли лучше после превращения LHC features в skills. Это отдельный эксперимент,
+ли лучше после превращения [LastHumanCommit](https://github.com/megamen32/LastHumanCommit)
+features в skills. Это отдельный эксперимент,
 иначе эффект skills смешается с эффектом всего оркестратора.
 
 ## Что мы используем как методику, но не как отдельный benchmark
