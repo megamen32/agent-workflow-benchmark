@@ -16,6 +16,7 @@ from .adapters import CodexAdapter, HarnessAdapter, OpenCodeAdapter
 from .adapters.base import AdapterResult, build_env
 from .manifest import canonical_manifest, load_manifest, manifest_sha256
 from .redaction import redact
+from .snapshot import canonical_snapshot, materialize_manifest_snapshot, snapshot_sha256
 
 
 ADAPTERS = {"codex": CodexAdapter, "opencode": OpenCodeAdapter}
@@ -81,6 +82,18 @@ def _prepare_workspace(scenario: dict[str, Any], base: Path, run_dir: Path) -> P
     else:
         workspace.mkdir(parents=True, exist_ok=True)
     return workspace
+
+
+def _install_snapshot_markers(workspace: Path, snapshot_root: Path) -> None:
+    """Expose only workflow marker files at the agent's isolated workspace root."""
+    source_root = snapshot_root / "source"
+    for name in ("AGENTS.md", "CLAUDE.md"):
+        marker = source_root / name
+        if marker.is_file():
+            destination = workspace / name
+            if destination.exists():
+                raise RuntimeError(f"scenario fixture already owns workflow marker: {name}")
+            shutil.copyfile(marker, destination)
 
 
 def _command_argv(command: str | list[Any]) -> tuple[list[str] | str, bool]:
@@ -244,17 +257,30 @@ def run_campaign(
 
     transcript_lines: list[str] = []
     rows: list[dict[str, Any]] = []
+    cumulative_effective_cost = 0.0
+    budget_limit = float(campaign.get("budget_stop_effective_cost_usd", 5.0))
+    budget_stop_triggered = False
     for arm in arms:
+        if budget_stop_triggered:
+            break
         adapter = _adapter(arm)
         for scenario in scenarios:
+            if budget_stop_triggered:
+                break
             repetitions = int(raw["campaign"].get("scenario_repetitions", 1))
             for attempt in range(1, repetitions + 1):
+                if budget_stop_triggered:
+                    break
                 run_dir = output / arm["id"] / scenario["id"] / f"attempt-{attempt}"
                 run_dir.mkdir(parents=True, exist_ok=True)
                 started_at = time.time()
                 started_monotonic = time.monotonic()
                 try:
+                    materialization = materialize_manifest_snapshot(
+                        run_dir / "snapshot-inputs", arm.get("snapshot"), base
+                    )
                     workspace = _prepare_workspace(scenario, base, run_dir)
+                    _install_snapshot_markers(workspace, run_dir / "snapshot-inputs")
                     env = build_env(run_dir, arm, environment)
                     prompt = str(scenario["prompt"])
                     adapter_result = adapter.run(
@@ -285,6 +311,32 @@ def run_campaign(
                     else:
                         status = "pass"
                         failure_category = None
+                    effective_cost = usage["cost_usd"]
+                    if isinstance(effective_cost, (int, float)):
+                        cumulative_effective_cost += float(effective_cost)
+                    snapshot = _cell_snapshot(
+                        raw,
+                        arm,
+                        scenario,
+                        attempt,
+                        row={
+                            "campaign": campaign["name"],
+                            "manifest_sha256": manifest_sha256(raw),
+                            "arm": arm["id"],
+                            "workflow_ref": arm.get("workflow_ref", arm["id"]),
+                            "scenario": scenario["id"],
+                            "attempt": attempt,
+                            "status": status,
+                            "cost_usd": usage["cost_usd"],
+                            "wall_clock_seconds": time.monotonic() - started_monotonic,
+                            "acceptance_returncode": acceptance_code,
+                            "started_at_epoch": started_at,
+                        },
+                        archive_name="campaign-transcripts.tar.zst",
+                        cumulative_effective_cost_usd=cumulative_effective_cost,
+                        budget_limit_usd=budget_limit,
+                        materialization=materialization,
+                    )
                     row = {
                         "campaign": campaign["name"],
                         "manifest_sha256": manifest_sha256(raw),
@@ -325,13 +377,21 @@ def run_campaign(
                         "failure_category": failure_category,
                         "acceptance_returncode": acceptance_code,
                         "started_at_epoch": started_at,
+                        "snapshot": snapshot,
+                        "snapshot_sha256": snapshot_sha256(snapshot),
+                        "budget_stop_effective_cost_usd": budget_limit,
                     }
                     (run_dir / "result.json").write_text(
                         json.dumps(redact(row), indent=2, ensure_ascii=False), encoding="utf-8"
                     )
+                    (run_dir / "snapshot.json").write_text(
+                        json.dumps(redact(snapshot), indent=2, ensure_ascii=False), encoding="utf-8"
+                    )
                     transcript_lines.extend(_transcript_lines(arm, scenario, attempt, adapter_result))
                     rows.append(row)
                     _ = acceptance_output
+                    if cumulative_effective_cost > budget_limit:
+                        budget_stop_triggered = True
                 except Exception as exc:  # retain a durable invalid receipt for setup failures
                     row = {
                         "campaign": campaign["name"],
@@ -350,6 +410,7 @@ def run_campaign(
                             "dialog_only": True,
                             "redacted": True,
                         },
+                        "budget_stop_effective_cost_usd": budget_limit,
                     }
                     (run_dir / "result.json").write_text(
                         json.dumps(row, indent=2, ensure_ascii=False), encoding="utf-8"
@@ -359,6 +420,10 @@ def run_campaign(
     results_path = output / "results.jsonl"
     results_path.write_text("".join(json.dumps(redact(row), ensure_ascii=False) + "\n" for row in rows), encoding="utf-8")
     summary = _summary(rows)
+    summary["budget_stop_effective_cost_usd"] = budget_limit
+    summary["budget_stop_triggered"] = budget_stop_triggered
+    summary["cumulative_effective_cost_usd"] = cumulative_effective_cost
+    summary["snapshot_materializations"] = _snapshot_materializations(rows)
     archive = _write_archive(output, raw, rows, transcript_lines, summary)
     summary["transcript_archive"] = archive
     (output / "summary.json").write_text(json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8")
@@ -404,6 +469,7 @@ def _write_archive(
         manifest_payload = {
             "manifest": canonical_manifest(raw_manifest),
             "manifest_sha256": manifest_sha256(raw_manifest),
+            "snapshot_materializations": _snapshot_materializations(rows),
             "summary": summary,
             "runs": [
                 {
@@ -434,3 +500,59 @@ def _write_archive(
         return {"path": str(archive), "sha256": digest, "members": ["campaign-manifest.json", "transcripts.jsonl"]}
     finally:
         shutil.rmtree(stage, ignore_errors=True)
+
+
+def _cell_snapshot(
+    raw_manifest: dict[str, Any],
+    arm: dict[str, Any],
+    scenario: dict[str, Any],
+    attempt: int,
+    row: dict[str, Any],
+    archive_name: str,
+    cumulative_effective_cost_usd: float,
+    budget_limit_usd: float,
+    materialization: dict[str, Any] | None,
+) -> dict[str, Any]:
+    levels = [
+        {
+            "id": level["id"],
+            "harness": level["harness"],
+            "model": level["model"],
+            "roles": level.get("roles", []),
+        }
+        for level in arm["topology"]["levels"]
+    ]
+    return canonical_snapshot(
+        {
+            "arm": arm["id"],
+            "source_commit": arm.get("source_commit"),
+            "source_digest": (materialization or {}).get("source_digest", arm.get("source_digest")),
+            "skill_digest": (materialization or {}).get("skill_digest", arm.get("skill_digest")),
+            "task_digest": (materialization or {}).get("task_digest", arm.get("task_digest")),
+            "docker_image_digest": arm["container"]["digest"],
+            "model_stack": levels,
+            "scenario": scenario["id"],
+            "attempt": attempt,
+            "receipt": row,
+            "transcript_archive": {
+                "name": archive_name,
+                "redacted": True,
+            },
+            "cumulative_effective_cost_usd": cumulative_effective_cost_usd,
+            "budget_stop_effective_cost_usd": budget_limit_usd,
+            "manifest_sha256": manifest_sha256(raw_manifest),
+            "materialization": materialization,
+        }
+    )
+
+
+def _snapshot_materializations(rows: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    """Publish one path-free materialization receipt per arm in the campaign manifest."""
+    result: dict[str, dict[str, Any]] = {}
+    for row in rows:
+        snapshot = row.get("snapshot")
+        materialization = snapshot.get("materialization") if isinstance(snapshot, dict) else None
+        arm = row.get("arm")
+        if isinstance(arm, str) and isinstance(materialization, dict):
+            result.setdefault(arm, materialization)
+    return result

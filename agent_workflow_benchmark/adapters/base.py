@@ -47,6 +47,13 @@ class HarnessAdapter:
         argv.extend(["--workdir", "/workspace"])
         argv.extend(["--volume", f"{workdir.resolve()}:/workspace:rw"])
         argv.extend(["--volume", f"{run_dir.resolve()}:/artifacts:rw"])
+        snapshot = self.arm.get("snapshot") or {}
+        for mount in snapshot.get("mounts", []):
+            category = str(mount["category"])
+            host_path = run_dir / "snapshot-inputs" / category
+            if not host_path.is_dir():
+                raise ValueError(f"declared snapshot mount has no materialized directory: {category}")
+            argv.extend(["--volume", f"{host_path.resolve()}:{mount['target']}:ro"])
         argv.extend(["--env", "HOME=/home/agent"])
         if self.name == "codex":
             argv.extend(["--env", "CODEX_HOME=/home/agent/.codex"])

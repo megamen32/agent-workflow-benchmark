@@ -60,3 +60,35 @@ The image digest makes the adapter/harness environment reproducible. Exact LLM
 output additionally depends on the declared provider route and its inference
 behavior; campaigns must record model ID, endpoint class, pricing basis, and
 repetition seed, and should publish the full transcript for audit.
+
+## Benchmark source snapshots
+
+An arm may declare benchmark-only source inputs. Before that cell starts, the
+runner copies only the listed files into the isolated `snapshot-inputs/` tree;
+it rejects absolute paths, `..` traversal, missing files, directories, and
+symlinked inputs. `task` inputs are resolved under `source_path`.
+
+```yaml
+arms:
+  - id: lhc-l1
+    snapshot:
+      source_path: /path/to/l0-source
+      skills_path: /path/to/l1-skills
+      inputs:
+        source: [common/agents/Worker.md]
+        skills: [planning/SKILL.md]
+        task: [.agents/tasks/work-benchmark.md]
+```
+
+The cell receipt records deterministic `source_digest`, `skill_digest`, and
+`task_digest`, the exact relative file list and file digests, plus the pinned
+source commit, model stack, Docker digest, redacted transcript archive, and
+effective-cost stop state. The campaign manifest inside the archive repeats
+one path-free materialization record per arm.
+
+If `mounts` are declared, only the corresponding materialized category is
+mounted read-only at the declared container target. The runner copies
+`AGENTS.md` and `CLAUDE.md` from the source snapshot into the isolated task
+workspace, while the read-only mount preserves any absolute role paths used by
+the workflow package. A scenario fixture cannot silently replace those marker
+files.

@@ -1,78 +1,81 @@
 # Agent Workflow Benchmark
 
-| Campaign | Guard pass rate | Wall-clock | Cost | Status |
+This project measures the thing model benchmarks hide: whether a complete
+workflow turns the same capable model stack into a better product result.
+
+| Workflow revision | Product quality | Effective cost | Time | Status |
 |---|---:|---:|---:|---|
-| L0 — Luna → GPT-5.4 Mini | **4/5 · 80%** | 31m 43s | **$0.2762** | pilot complete |
-| L1 — MiniMax M3 → MiniMax M2.7 | **3/5 · 60%** | 24m 33s | n/a* | pilot complete |
+| [L0](https://github.com/megamen32/LastHumanCommit/releases/tag/lhc-l0-20260809) — current procedural workflow | pending | pending | pending | campaign not run |
+| [L1](https://github.com/megamen32/LastHumanCommit) — procedural features exposed as skills | pending | pending | pending | awaiting frozen release |
 
-`*` MiniMax ran through an unpriced subscription route; its cost is not
-invented. Full results and failures are in
-[RESULTS-LHC-CODEX-2026-08-09.md](docs/RESULTS-LHC-CODEX-2026-08-09.md).
+The comparison uses one declared Codex stack for both revisions:
+`gpt-5.6-terra` mentor → `gpt-5.6-luna` Lead → `gpt-5.4-mini` Worker. The
+workflow decides how those levels cooperate; the benchmark does not add
+parallelism or agents that a workflow does not have.
 
-Этот верхний блок — исторический workflow-guard pilot, а не общий benchmark
-качества моделей или инженерных результатов. Новый обзор открытых бенчмарков
-и методика сравнения находятся в [research/](research/README.md): там отдельно
-разведены reference/oracle-проверки и «не хуже по бизнес-результату», а также
-качество, фактическая цена и время.
+## Why this exists
 
-Модели сами по себе ничего не гарантируют. Реальный результат создаёт
-workflow: обвязка, правила работы, связи между моделями, проверка и выбор моделей.
+Model quality is only one input. The harness, rules, delegation, verification,
+and human gates decide whether a request is completed, what it costs, and how
+long it takes. We therefore report three dimensions separately:
 
-У обвязок много, а общего benchmark почти нет. Этот проект сравнивает именно
-workflow, не заставляя его быть [LHC](https://github.com/megamen32/LastHumanCommit)
-или параллельным.
+- product quality: did the user-visible acceptance criteria pass?
+- effective price: what did the provider actually charge? Missing or subscription
+  pricing is reported as unknown, never invented;
+- wall-clock time: useful when speed matters, but not merged into quality or
+  price.
 
-Мы берём три взаимодополняющих источника:
+An optional aggregate may be shown only as a clearly labelled convenience;
+quality, price, and time are not universally orderable.
 
-- **Quorum / Superpowers Evals** — основной behavioral benchmark: реальные
-  coding-agent CLI, сценарии, deterministic checks и receipts. Superpowers —
-  самый популярный workflow из рассмотренных.
-- **AI Workflow Benchmark** — независимая проверка на real-repo задачах, чтобы
-  не судить все workflow только по тестам Superpowers.
-- **SkillsBench** — отдельная проверка эффекта skills, когда workflow
-  переходит от монолитных features к skills.
+## Reproducibility
 
-ECC используется как источник A/B-методики; gstack и остальные популярные
-workflow входят в обзор, но не имеют подходящего общего переносимого корпуса.
-Подробное обоснование: [WHY-BENCHMARKS.md](docs/WHY-BENCHMARKS.md).
+Every campaign pins the workflow revision, task-fixture digest, model topology,
+Docker image digest, and runner version. Each run keeps one redacted compressed
+archive containing the complete dialogue, receipts, acceptance output, and
+manifest. The archive is published as a release asset; its SHA-256 and manifest
+remain in git.
 
-Главные критерии — product quality и цена. Скорость вторична: если агент довёл дело
-до конца, когда пользователь спит, лишние минуты не важны. Токены — только
-диагностика: миллион токенов может стоить центы или десятки тысяч долларов.
-При нулевом числе успешных задач цена за успех не ранжируется вообще.
+The runner stops before launching the next cell once cumulative effective cost
+exceeds `$5.00`, pending an explicit decision to continue.
 
-Топология workflow записывается как есть: одна, две или три модели. Связи
-между ними определяет сам workflow. Benchmark не добавляет Worker, Adviser или
-параллельность, которых у workflow нет.
-
-В текущий **workflow-guard** campaign pack добавлены пять проверок поведения: верификация перед
-заявлением результата, разделение spec/plan, отсутствие лишнего fan-out на
-маленькой задаче, устойчивость к давлению «просто подтверди» и обнаружение
-phantom completion. Это не общий тест инженерного качества: сложные
-product-outcome задачи идут отдельным треком.
-
-Полные транскрипты — обязательные артефакты каждого опубликованного прогона.
-В git хранится manifest с хэшами, а сжатые JSONL-транскрипты — в release
-assets; перед публикацией они проходят secret/privacy redaction.
-
-Исполняемый runner принимает [unified manifest](configs/manifest.example.yaml).
-Codex и OpenCode запускаются только внутри arm-specific Docker images,
-зафиксированных digest'ом; verifier запускается в том же контейнере. Mutable
-tags, host-side harness execution и host-side acceptance checks запрещены.
+## Run locally
 
 ```bash
-python3 scripts/run_campaign.py configs/manifest.example.yaml --dry-run
-python3 scripts/run_campaign.py configs/manifest.example.yaml --output results/example
+python3 -m pip install -e .
+python3 scripts/run_campaign.py configs/manifest.docker-smoke.yaml --output results/smoke
 ```
 
-Перед реальным запуском замените примерные image/digest на существующие локально
-закэшированные образы; runner использует `docker --pull never`.
+The smoke campaign is deterministic and uses a locally cached, digest-pinned
+Node image. It validates Docker isolation, receipts, acceptance checks, budget
+accounting, and transcript archiving; it is not a model-quality result.
+
+The product campaign is intentionally not runnable until its Codex image is
+published under an immutable digest and L1 is frozen:
 
 ```bash
-python3 scripts/summarize_results.py results.jsonl
+python3 scripts/run_campaign.py configs/campaign.yaml --dry-run
 ```
 
-См. [протокол](docs/PROTOCOL.md), [runner contract](docs/RUNNER.md), [unified manifest](configs/manifest.example.yaml) и
-[схему результата](docs/RESULT_SCHEMA.md).
+## Benchmark sources
+
+- [Quorum / Superpowers Evals](https://github.com/prime-radiant-inc/superpowers-evals)
+  supplies behavioral scenarios and deterministic receipts.
+- [AI Workflow Benchmark](https://github.com/xmpuspus/ai-workflow-benchmark)
+  supplies a separate real-repository comparison methodology.
+- [SkillsBench](https://github.com/benchflow-ai/skillsbench) checks whether
+  skills help when a workflow exposes reusable procedures.
+
+These sources are reference material, not a claim that their tasks alone
+measure product quality. This repository also keeps its own product-outcome
+tasks and publishes every full transcript.
+
+## Documentation
+
+- [Protocol](docs/PROTOCOL.md)
+- [Runner contract](docs/RUNNER.md)
+- [Result schema](docs/RESULT_SCHEMA.md)
+- [Benchmark rationale](docs/WHY-BENCHMARKS.md)
+- [Research catalogue](research/README.md)
 
 MIT — [LICENSE](LICENSE).

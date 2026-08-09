@@ -96,6 +96,8 @@ def load_manifest(path: str | Path) -> tuple[dict[str, Any], Path]:
             if level["harness"] != harness:
                 raise ManifestError(f"{where} topology levels must use the arm harness container")
         arm["harness"] = harness
+        if "snapshot" in arm:
+            _validate_snapshot(arm["snapshot"], f"{where}.snapshot")
 
     scenarios = _as_list(raw["scenarios"], "scenarios")
     scenario_ids: set[str] = set()
@@ -141,6 +143,37 @@ def _validate_topology(topology: Any, where: str) -> None:
         ids.add(level_id)
         _require(level, "harness", level_where)
         _require(level, "model", level_where)
+
+
+def _validate_snapshot(snapshot: Any, where: str) -> None:
+    if not isinstance(snapshot, dict):
+        raise ManifestError(f"{where} must be a mapping")
+    source_path = _require(snapshot, "source_path", where)
+    if not isinstance(source_path, str) or not source_path.strip():
+        raise ManifestError(f"{where}.source_path must be a non-empty path")
+    skills_path = snapshot.get("skills_path")
+    if skills_path is not None and (not isinstance(skills_path, str) or not skills_path.strip()):
+        raise ManifestError(f"{where}.skills_path must be a path or null")
+    inputs = snapshot.get("inputs", {})
+    if not isinstance(inputs, dict):
+        raise ManifestError(f"{where}.inputs must be a mapping")
+    for category in ("source", "skills", "task"):
+        values = inputs.get(category, [])
+        if not isinstance(values, list) or not all(isinstance(value, str) for value in values):
+            raise ManifestError(f"{where}.inputs.{category} must be a list of strings")
+    mounts = snapshot.get("mounts", [])
+    if not isinstance(mounts, list):
+        raise ManifestError(f"{where}.mounts must be a list")
+    for index, mount in enumerate(mounts):
+        mount_where = f"{where}.mounts[{index}]"
+        if not isinstance(mount, dict):
+            raise ManifestError(f"{mount_where} must be a mapping")
+        category = _require(mount, "category", mount_where)
+        target = _require(mount, "target", mount_where)
+        if category not in {"source", "skills", "task"}:
+            raise ManifestError(f"{mount_where}.category must be source, skills, or task")
+        if not isinstance(target, str) or not target.startswith("/"):
+            raise ManifestError(f"{mount_where}.target must be an absolute container path")
 
 
 def canonical_manifest(raw: dict[str, Any]) -> dict[str, Any]:
