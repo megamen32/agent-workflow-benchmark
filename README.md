@@ -5,13 +5,19 @@ workflow turns the same capable model stack into a better product result.
 
 | Workflow revision | Product quality | Effective cost | Time | Status |
 |---|---:|---:|---:|---|
-| [L0](https://github.com/megamen32/LastHumanCommit/releases/tag/lhc-l0-20260809) — current procedural workflow | pending | pending | pending | campaign not run |
-| [L1](https://github.com/megamen32/LastHumanCommit) — procedural features exposed as skills | pending | pending | pending | awaiting frozen release |
+| [L0](https://github.com/megamen32/LastHumanCommit/releases/tag/lhc-l0-20260809) — current procedural workflow | **1/1 · 100%** | unknown · subscription route | **64.70s** | pilot complete |
+| [L1](https://github.com/megamen32/LastHumanCommit/releases/tag/lhc-l1-20260809) — procedural features exposed as skills | **1/1 · 100%** | unknown · subscription route | **79.34s** | pilot complete |
 
 The comparison uses one declared Codex stack for both revisions:
 `gpt-5.6-terra` mentor → `gpt-5.6-luna` Lead → `gpt-5.4-mini` Worker. The
 workflow decides how those levels cooperate; the benchmark does not add
 parallelism or agents that a workflow does not have.
+
+This is one product-outcome pilot, not a universal winner claim. Quality tied;
+L0 was 18.4% faster on this task. The provider route returned no billable
+charge, so price is reported as unknown rather than fabricated; the full
+receipt and redacted dialogue are in
+[`results/lhc-skills-product-outcome-20260809/`](results/lhc-skills-product-outcome-20260809/).
 
 ## Why this exists
 

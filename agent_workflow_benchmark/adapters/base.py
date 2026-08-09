@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import shlex
 import subprocess
 import time
 from dataclasses import dataclass, field
@@ -54,16 +55,32 @@ class HarnessAdapter:
             if not host_path.is_dir():
                 raise ValueError(f"declared snapshot mount has no materialized directory: {category}")
             argv.extend(["--volume", f"{host_path.resolve()}:{mount['target']}:ro"])
-        argv.extend(["--env", "HOME=/home/agent"])
+        auth = self.arm.get("auth") or {}
+        runtime_home = "/artifacts/home" if auth else "/home/agent"
+        argv.extend(["--env", f"HOME={runtime_home}"])
+        if auth:
+            host_auth = os.environ.get(str(auth["host_env"]))
+            if not host_auth or not os.path.isdir(host_auth):
+                raise RuntimeError(f"auth host path from {auth['host_env']} is unavailable")
+            argv.extend(["--volume", f"{Path(host_auth).resolve()}:{auth['container_path']}:ro"])
+        copy_auth = bool(auth and self.name == "codex")
         if self.name == "codex":
-            argv.extend(["--env", "CODEX_HOME=/home/agent/.codex"])
+            codex_home = "/artifacts/codex-home" if auth else "/home/agent/.codex"
+            argv.extend(["--env", f"CODEX_HOME={codex_home}"])
         if self.name == "opencode":
             argv.extend(["--env", "OPENCODE_CONFIG_DIR=/home/agent/.config/opencode"])
         for key in sorted(env):
             if key not in {"PATH", "HOME", "CODEX_HOME", "OPENCODE_CONFIG_DIR"}:
                 argv.extend(["--env", key])
+        if copy_auth:
+            argv.extend(["--entrypoint", "/bin/sh"])
         argv.append(str(container["image"]))
-        argv.extend(inner)
+        if copy_auth:
+            command = shlex.join(inner)
+            cleanup = "find /artifacts/codex-home -type f -delete; find /artifacts/codex-home -depth -type d -empty -delete"
+            argv.extend(["-lc", f"mkdir -p /artifacts/home /artifacts/codex-home && trap '{cleanup}' EXIT && cp /auth/codex/auth.json /auth/codex/.credentials.json /artifacts/codex-home/ && {command}"])
+        else:
+            argv.extend(inner)
         return argv
 
     def preflight_container(self, run_dir: Path) -> dict[str, Any]:
@@ -87,7 +104,17 @@ class HarnessAdapter:
         if inspect.returncode != 0:
             raise RuntimeError(f"pinned image is not cached locally: {image}")
         repo_digests = json.loads(inspect.stdout.strip() or "[]")
-        if not any(str(digest).endswith(f"@{expected}") for digest in repo_digests):
+        matched_registry_digest = any(str(item).endswith(f"@{expected}") for item in repo_digests)
+        matched_local_id = False
+        if not matched_registry_digest and self.container().get("allow_local_image_id"):
+            local_id = subprocess.run(
+                ["docker", "image", "inspect", image, "--format", "{{.Id}}"],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            matched_local_id = local_id.returncode == 0 and local_id.stdout.strip() == expected
+        if not (matched_registry_digest or matched_local_id):
             raise RuntimeError(f"cached image digest does not match manifest: {image}")
         metadata = {
             "runtime": "docker",
@@ -95,6 +122,7 @@ class HarnessAdapter:
             "image": image,
             "digest": expected,
             "repo_digests": repo_digests,
+            "verification": "registry-repodigest" if matched_registry_digest else "local-image-id",
         }
         (run_dir / "container-preflight.json").write_text(
             json.dumps(metadata, indent=2, ensure_ascii=False), encoding="utf-8"

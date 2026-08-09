@@ -1,0 +1,8 @@
+{
+  "runtime": "docker",
+  "engine_version": "29.7.0",
+  "image": "superpowers-evals:local",
+  "digest": "sha256:f84f67e05d1b7bdedd12a31c01bd7ec90b7aeb1c9d32cb64e76904c51e00095e",
+  "repo_digests": [],
+  "verification": "local-image-id"
+}

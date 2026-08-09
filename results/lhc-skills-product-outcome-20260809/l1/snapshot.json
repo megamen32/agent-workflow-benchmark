@@ -1,0 +1,224 @@
+{
+  "arm": "lhc-l1",
+  "source_commit": "3c79d6c445447a8be94ed59608db8c4946ee4f7f",
+  "source_digest": "sha256:21df01a4651f6d62fff4be926b0b426df93748de1fd019ad14fb71d6eebaa5f9",
+  "skill_digest": "sha256:235042763b828e2a41d52dc54d2eefdaf237c1075eab9d9c7bdd26a3f6fb5986",
+  "task_digest": "sha256:41e6f3a5cc2b5f9d1a87d165a7563633f4a7ef7ec04b51de81e928e644dda624",
+  "docker_image_digest": "sha256:f84f67e05d1b7bdedd12a31c01bd7ec90b7aeb1c9d32cb64e76904c51e00095e",
+  "model_stack": [
+    {
+      "id": "mentor",
+      "harness": "codex",
+      "model": "gpt-5.6-terra",
+      "roles": [
+        "adviser",
+        "overseer",
+        "critic"
+      ]
+    },
+    {
+      "id": "lead",
+      "harness": "codex",
+      "model": "gpt-5.6-luna",
+      "roles": [
+        "lead"
+      ]
+    },
+    {
+      "id": "worker",
+      "harness": "codex",
+      "model": "gpt-5.4-mini",
+      "roles": [
+        "worker",
+        "reviewer",
+        "tester"
+      ]
+    }
+  ],
+  "scenario": "product-outcome-systematic-debugging",
+  "attempt": 1,
+  "receipt": {
+    "campaign": "lhc-skills-product-outcome",
+    "manifest_sha256": "bd4f0802b3a5d64d27764738ae151073419ac43668ed60ff700450d223056525",
+    "arm": "lhc-l1",
+    "workflow_ref": "lhc-l1",
+    "scenario": "product-outcome-systematic-debugging",
+    "attempt": 1,
+    "status": "pass",
+    "cost_usd": null,
+    "wall_clock_seconds": 79.3349123870139,
+    "acceptance_returncode": 0,
+    "started_at_epoch": 1786281946.2014785
+  },
+  "transcript_archive": {
+    "name": "campaign-transcripts.tar.zst",
+    "redacted": true
+  },
+  "cumulative_effective_cost_usd": 0.0,
+  "budget_stop_effective_cost_usd": 5.0,
+  "manifest_sha256": "bd4f0802b3a5d64d27764738ae151073419ac43668ed60ff700450d223056525",
+  "materialization": {
+    "format": "snapshot-v1",
+    "source_digest": "sha256:21df01a4651f6d62fff4be926b0b426df93748de1fd019ad14fb71d6eebaa5f9",
+    "skill_digest": "sha256:235042763b828e2a41d52dc54d2eefdaf237c1075eab9d9c7bdd26a3f6fb5986",
+    "task_digest": "sha256:41e6f3a5cc2b5f9d1a87d165a7563633f4a7ef7ec04b51de81e928e644dda624",
+    "inputs": {
+      "source": [
+        {
+          "path": "AGENTS.md",
+          "sha256": "sha256:4d603ae77b66665e51da7fead3d76260b4aa193f7be107958cb1cd8dd642f3a7",
+          "size": 5165
+        },
+        {
+          "path": "CLAUDE.md",
+          "sha256": "sha256:4d603ae77b66665e51da7fead3d76260b4aa193f7be107958cb1cd8dd642f3a7",
+          "size": 5165
+        },
+        {
+          "path": "adapters/codex/adapter.yaml",
+          "sha256": "sha256:59ee4df61a8aec1f91a059423764a54c8935a433662eb3a25c48d28afd37d313",
+          "size": 460
+        },
+        {
+          "path": "adapters/codex/instructions.md",
+          "sha256": "sha256:30f71e7f4cc2d9ca84a9cdd276f2b2de5898b3280e7eea5ae0f97796a634dffc",
+          "size": 977
+        },
+        {
+          "path": "adapters/codex/templates/subagent.md",
+          "sha256": "sha256:fcd77cea804b1f34b681c09317e1301d1a875a014d80e35bdf40c281624f82e9",
+          "size": 1443
+        },
+        {
+          "path": "common/agents/Adviser.md",
+          "sha256": "sha256:6f86de7e94b9213925f0eda175f740283094fef7e4916d634cd0dad80d8b64d1",
+          "size": 867
+        },
+        {
+          "path": "common/agents/Critic.md",
+          "sha256": "sha256:0063493d9b9c65195bafed622e3fd1656654e1f1304129e9ce82dda7a3da6f40",
+          "size": 1429
+        },
+        {
+          "path": "common/agents/Lead.md",
+          "sha256": "sha256:0ab82f6fd6a342ef55a67b2b57a79add469a8d02228006efb573d15f702eca75",
+          "size": 10918
+        },
+        {
+          "path": "common/agents/Overseer.md",
+          "sha256": "sha256:c784ca326828d1006bcafc814bc232b23643942504223c0282d1574352e102f2",
+          "size": 2074
+        },
+        {
+          "path": "common/agents/Reviewer.md",
+          "sha256": "sha256:0256ba885ee9187ed8a6ceceda2fb7be863a64189638571716ef7e51dc2bfcd1",
+          "size": 1344
+        },
+        {
+          "path": "common/agents/Tester.md",
+          "sha256": "sha256:2a1191ba70f19caae621b261f005e6b6df2ba91a56eeb56d1832727d933398d1",
+          "size": 2709
+        },
+        {
+          "path": "common/agents/Worker.md",
+          "sha256": "sha256:cc9f86fb6ff51fa2384758f32a2e89fff2e68e72387f142b5e26c7d237e94f1e",
+          "size": 3125
+        },
+        {
+          "path": "common/profiles/Planning.md",
+          "sha256": "sha256:42a0ad97e7be155a36f7c479a7796d57ec417af9559abcb506199144bc238a3a",
+          "size": 2467
+        },
+        {
+          "path": "common/protocols/WORKER_IMPLEMENT.md",
+          "sha256": "sha256:7716ffd4cb94162c3e4a351fd24cd6383a76b5329fa509e9cfc21c9fd4e00be5",
+          "size": 1468
+        },
+        {
+          "path": "common/protocols/WORKER_RESEARCH.md",
+          "sha256": "sha256:d583dcf0feafda43b453d391dac9caf892cc55cf8e902f5ad6b9cc72c9d32b65",
+          "size": 1639
+        },
+        {
+          "path": "skills/bugfix-tdd/SKILL.md",
+          "sha256": "sha256:eaa2740bbf9e6176bd0b7591ae95b20c5f29c89c8f3bfa2cc47808d431524616",
+          "size": 950
+        },
+        {
+          "path": "skills/business-delivery/SKILL.md",
+          "sha256": "sha256:52bca968518a3cbc2234ed4e604cf1d4b9f50d48e2d1fbb5c868b342be11810c",
+          "size": 849
+        },
+        {
+          "path": "skills/feature-implementation/SKILL.md",
+          "sha256": "sha256:ce12918228070a58c49292b8851d20a1ef60c2b18b0b3956c72171337d4fa10c",
+          "size": 949
+        },
+        {
+          "path": "skills/planning/SKILL.md",
+          "sha256": "sha256:3464150e641664a408624956e09b6e4edc35855496ccdcdcdbcbfc5a47c28314",
+          "size": 1085
+        },
+        {
+          "path": "skills/real-use-testing/SKILL.md",
+          "sha256": "sha256:0ecc9484b7ba194d1f3e91b46a59c7b45b7fbf33b3edbcfbf96a9fd3f29e6fbc",
+          "size": 908
+        },
+        {
+          "path": "skills/release/SKILL.md",
+          "sha256": "sha256:deaefcb17973ac51cb67267ec184c8e9d8d4c7781ad2cb9e42012c3eae00a95a",
+          "size": 789
+        },
+        {
+          "path": "templates/FULL_CYCLE.md",
+          "sha256": "sha256:c78f1d3a102db3962f426db5614d9aaa38ecee9e53cae8a40b7c48414d5c2225",
+          "size": 4678
+        },
+        {
+          "path": "templates/RELEASE_HANDOFF.md",
+          "sha256": "sha256:8ec1766ec50638ca01295990201740ad3001b066174dd8d79119ee8f1d4f8381",
+          "size": 1953
+        }
+      ],
+      "skills": [
+        {
+          "path": "bugfix-tdd/SKILL.md",
+          "sha256": "sha256:eaa2740bbf9e6176bd0b7591ae95b20c5f29c89c8f3bfa2cc47808d431524616",
+          "size": 950
+        },
+        {
+          "path": "business-delivery/SKILL.md",
+          "sha256": "sha256:52bca968518a3cbc2234ed4e604cf1d4b9f50d48e2d1fbb5c868b342be11810c",
+          "size": 849
+        },
+        {
+          "path": "feature-implementation/SKILL.md",
+          "sha256": "sha256:ce12918228070a58c49292b8851d20a1ef60c2b18b0b3956c72171337d4fa10c",
+          "size": 949
+        },
+        {
+          "path": "planning/SKILL.md",
+          "sha256": "sha256:3464150e641664a408624956e09b6e4edc35855496ccdcdcdbcbfc5a47c28314",
+          "size": 1085
+        },
+        {
+          "path": "real-use-testing/SKILL.md",
+          "sha256": "sha256:0ecc9484b7ba194d1f3e91b46a59c7b45b7fbf33b3edbcfbf96a9fd3f29e6fbc",
+          "size": 908
+        },
+        {
+          "path": "release/SKILL.md",
+          "sha256": "sha256:deaefcb17973ac51cb67267ec184c8e9d8d4c7781ad2cb9e42012c3eae00a95a",
+          "size": 789
+        }
+      ],
+      "task": [
+        {
+          "path": ".agents/tasks/benchmark-product-outcome.md",
+          "sha256": "sha256:b1bab5815724a831a4cce75ee978d6a7c48947fc6f3ac0c19f60d6a9dbee877d",
+          "size": 324
+        }
+      ]
+    }
+  }
+}

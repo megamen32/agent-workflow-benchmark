@@ -40,25 +40,33 @@ arms:
     source_commit: 44da5d900fe631d45cff292efb7284fcedb25ba1
     skill_digest: null
     harness: codex
+    auth:
+      host_env: CODEX_HOME
+      container_path: /auth/codex
+    adapter:
+      executable: codex
+      extra_args: [--dangerously-bypass-approvals-and-sandbox]
     container:
-      image: ghcr.io/megamen32/lhc-codex-harness:2026-08-09@sha256:0000000000000000000000000000000000000000000000000000000000000000
-      digest: sha256:0000000000000000000000000000000000000000000000000000000000000000
+      image: superpowers-evals:local
+      digest: sha256:f84f67e05d1b7bdedd12a31c01bd7ec90b7aeb1c9d32cb64e76904c51e00095e
+      image_id: sha256:f84f67e05d1b7bdedd12a31c01bd7ec90b7aeb1c9d32cb64e76904c51e00095e
+      allow_local_image_id: true
       platform: linux/amd64
-      network: none
+      network: host
     topology:
       levels:
         - id: mentor
           roles: [adviser, overseer, critic]
           harness: codex
-          model: oc/gpt-5.6-terra
+          model: gpt-5.6-terra
         - id: lead
           roles: [lead]
           harness: codex
-          model: oc/gpt-5.6-luna
+          model: gpt-5.6-luna
         - id: worker
           roles: [worker, reviewer, tester]
           harness: codex
-          model: oc/gpt-5.4-mini
+          model: gpt-5.4-mini
       parallelism:
         mode: declared-by-workflow
         max_concurrent_children: null
@@ -94,25 +102,33 @@ arms:
     source_commit: 3c79d6c445447a8be94ed59608db8c4946ee4f7f
     skill_digest: sha256:235042763b828e2a41d52dc54d2eefdaf237c1075eab9d9c7bdd26a3f6fb5986
     harness: codex
+    auth:
+      host_env: CODEX_HOME
+      container_path: /auth/codex
+    adapter:
+      executable: codex
+      extra_args: [--dangerously-bypass-approvals-and-sandbox]
     container:
-      image: ghcr.io/megamen32/lhc-codex-harness:2026-08-09@sha256:0000000000000000000000000000000000000000000000000000000000000000
-      digest: sha256:0000000000000000000000000000000000000000000000000000000000000000
+      image: superpowers-evals:local
+      digest: sha256:f84f67e05d1b7bdedd12a31c01bd7ec90b7aeb1c9d32cb64e76904c51e00095e
+      image_id: sha256:f84f67e05d1b7bdedd12a31c01bd7ec90b7aeb1c9d32cb64e76904c51e00095e
+      allow_local_image_id: true
       platform: linux/amd64
-      network: none
+      network: host
     topology:
       levels:
         - id: mentor
           roles: [adviser, overseer, critic]
           harness: codex
-          model: oc/gpt-5.6-terra
+          model: gpt-5.6-terra
         - id: lead
           roles: [lead]
           harness: codex
-          model: oc/gpt-5.6-luna
+          model: gpt-5.6-luna
         - id: worker
           roles: [worker, reviewer, tester]
           harness: codex
-          model: oc/gpt-5.4-mini
+          model: gpt-5.4-mini
       parallelism:
         mode: declared-by-workflow
         max_concurrent_children: null
@@ -138,6 +154,12 @@ arms:
           - adapters/codex/adapter.yaml
           - adapters/codex/instructions.md
           - adapters/codex/templates/subagent.md
+          - skills/planning/SKILL.md
+          - skills/bugfix-tdd/SKILL.md
+          - skills/feature-implementation/SKILL.md
+          - skills/real-use-testing/SKILL.md
+          - skills/business-delivery/SKILL.md
+          - skills/release/SKILL.md
         skills:
           - planning/SKILL.md
           - bugfix-tdd/SKILL.md
@@ -149,8 +171,6 @@ arms:
       mounts:
         - category: source
           target: /home/roomhacker/.local/share/last-human-commit/current
-        - category: skills
-          target: /home/roomhacker/.local/share/last-human-commit/current/skills
 
 scenarios:
   - id: product-outcome-systematic-debugging

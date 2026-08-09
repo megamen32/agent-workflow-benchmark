@@ -1,0 +1,7 @@
+{
+  "returncode": 0,
+  "timed_out": false,
+  "output": "",
+  "wall_clock_seconds": 1.0676254699938,
+  "container_image": "superpowers-evals:local"
+}

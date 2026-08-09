@@ -62,6 +62,28 @@ class RunnerContractTests(unittest.TestCase):
             with self.assertRaises(ManifestError):
                 load_manifest(path)
 
+    def test_manifest_accepts_explicitly_attested_local_image_id(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "manifest.yaml"
+            value = manifest().replace(
+                f"image: example/test@{DIGEST}",
+                "image: local/test:exact\n      image_id: " + DIGEST + "\n      allow_local_image_id: true",
+            )
+            path.write_text(value, encoding="utf-8")
+            loaded, _ = load_manifest(path)
+            self.assertEqual(loaded["arms"][0]["container"]["image_id"], DIGEST)
+
+    def test_manifest_accepts_env_selected_read_only_auth_mount(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "manifest.yaml"
+            value = manifest().replace(
+                "  - id: arm",
+                "  - id: arm\n    auth:\n      host_env: CODEX_AUTH_HOME\n      container_path: /auth/codex",
+            )
+            path.write_text(value, encoding="utf-8")
+            loaded, _ = load_manifest(path)
+            self.assertEqual(loaded["arms"][0]["auth"]["container_path"], "/auth/codex")
+
     def test_codex_and_opencode_commands_are_inner_container_commands(self) -> None:
         arm = load_manifest_from_text(manifest("codex"))[0]["arms"][0]
         codex = CodexAdapter(arm).command("hello", Path("/host/workspace"), "model")

@@ -1,0 +1,163 @@
+{
+  "arm": "lhc-l0",
+  "source_commit": "44da5d900fe631d45cff292efb7284fcedb25ba1",
+  "source_digest": "sha256:20587eaecc3c605e77057cd6a90ea0d7b93a1c992b5c8725af6184896c4ac932",
+  "skill_digest": null,
+  "task_digest": "sha256:41e6f3a5cc2b5f9d1a87d165a7563633f4a7ef7ec04b51de81e928e644dda624",
+  "docker_image_digest": "sha256:f84f67e05d1b7bdedd12a31c01bd7ec90b7aeb1c9d32cb64e76904c51e00095e",
+  "model_stack": [
+    {
+      "id": "mentor",
+      "harness": "codex",
+      "model": "gpt-5.6-terra",
+      "roles": [
+        "adviser",
+        "overseer",
+        "critic"
+      ]
+    },
+    {
+      "id": "lead",
+      "harness": "codex",
+      "model": "gpt-5.6-luna",
+      "roles": [
+        "lead"
+      ]
+    },
+    {
+      "id": "worker",
+      "harness": "codex",
+      "model": "gpt-5.4-mini",
+      "roles": [
+        "worker",
+        "reviewer",
+        "tester"
+      ]
+    }
+  ],
+  "scenario": "product-outcome-systematic-debugging",
+  "attempt": 1,
+  "receipt": {
+    "campaign": "lhc-skills-product-outcome",
+    "manifest_sha256": "9c768b45e547b45fb91ce60e297ea660212904a730ea8ca2a92a3c1106c526b4",
+    "arm": "lhc-l0",
+    "workflow_ref": "lhc-l0",
+    "scenario": "product-outcome-systematic-debugging",
+    "attempt": 1,
+    "status": "pass",
+    "cost_usd": null,
+    "wall_clock_seconds": 64.70167799698538,
+    "acceptance_returncode": 0,
+    "started_at_epoch": 1786281731.3588889
+  },
+  "transcript_archive": {
+    "name": "campaign-transcripts.tar.zst",
+    "redacted": true
+  },
+  "cumulative_effective_cost_usd": 0.0,
+  "budget_stop_effective_cost_usd": 5.0,
+  "manifest_sha256": "9c768b45e547b45fb91ce60e297ea660212904a730ea8ca2a92a3c1106c526b4",
+  "materialization": {
+    "format": "snapshot-v1",
+    "source_digest": "sha256:20587eaecc3c605e77057cd6a90ea0d7b93a1c992b5c8725af6184896c4ac932",
+    "skill_digest": null,
+    "task_digest": "sha256:41e6f3a5cc2b5f9d1a87d165a7563633f4a7ef7ec04b51de81e928e644dda624",
+    "inputs": {
+      "source": [
+        {
+          "path": "AGENTS.md",
+          "sha256": "sha256:4d603ae77b66665e51da7fead3d76260b4aa193f7be107958cb1cd8dd642f3a7",
+          "size": 5165
+        },
+        {
+          "path": "CLAUDE.md",
+          "sha256": "sha256:4d603ae77b66665e51da7fead3d76260b4aa193f7be107958cb1cd8dd642f3a7",
+          "size": 5165
+        },
+        {
+          "path": "adapters/codex/adapter.yaml",
+          "sha256": "sha256:59ee4df61a8aec1f91a059423764a54c8935a433662eb3a25c48d28afd37d313",
+          "size": 460
+        },
+        {
+          "path": "adapters/codex/instructions.md",
+          "sha256": "sha256:30f71e7f4cc2d9ca84a9cdd276f2b2de5898b3280e7eea5ae0f97796a634dffc",
+          "size": 977
+        },
+        {
+          "path": "adapters/codex/templates/subagent.md",
+          "sha256": "sha256:fcd77cea804b1f34b681c09317e1301d1a875a014d80e35bdf40c281624f82e9",
+          "size": 1443
+        },
+        {
+          "path": "common/agents/Adviser.md",
+          "sha256": "sha256:6f86de7e94b9213925f0eda175f740283094fef7e4916d634cd0dad80d8b64d1",
+          "size": 867
+        },
+        {
+          "path": "common/agents/Critic.md",
+          "sha256": "sha256:0063493d9b9c65195bafed622e3fd1656654e1f1304129e9ce82dda7a3da6f40",
+          "size": 1429
+        },
+        {
+          "path": "common/agents/Lead.md",
+          "sha256": "sha256:3f8c45e2ae7d48c626eedb0009b8900bb8b63fed6a85298e588e7a0a4418fa2a",
+          "size": 10216
+        },
+        {
+          "path": "common/agents/Overseer.md",
+          "sha256": "sha256:c784ca326828d1006bcafc814bc232b23643942504223c0282d1574352e102f2",
+          "size": 2074
+        },
+        {
+          "path": "common/agents/Reviewer.md",
+          "sha256": "sha256:0256ba885ee9187ed8a6ceceda2fb7be863a64189638571716ef7e51dc2bfcd1",
+          "size": 1344
+        },
+        {
+          "path": "common/agents/Tester.md",
+          "sha256": "sha256:4ecb86d540209b1424cb1dd12b871aca907d9a86b85c07165f46fd298d86d390",
+          "size": 2355
+        },
+        {
+          "path": "common/agents/Worker.md",
+          "sha256": "sha256:5887b4dc5998c76ca9e20f43e0f71b8309ab6cb530336745c63a04cfdf34004f",
+          "size": 2485
+        },
+        {
+          "path": "common/profiles/Planning.md",
+          "sha256": "sha256:42a0ad97e7be155a36f7c479a7796d57ec417af9559abcb506199144bc238a3a",
+          "size": 2467
+        },
+        {
+          "path": "common/protocols/WORKER_IMPLEMENT.md",
+          "sha256": "sha256:7716ffd4cb94162c3e4a351fd24cd6383a76b5329fa509e9cfc21c9fd4e00be5",
+          "size": 1468
+        },
+        {
+          "path": "common/protocols/WORKER_RESEARCH.md",
+          "sha256": "sha256:d583dcf0feafda43b453d391dac9caf892cc55cf8e902f5ad6b9cc72c9d32b65",
+          "size": 1639
+        },
+        {
+          "path": "templates/FULL_CYCLE.md",
+          "sha256": "sha256:c78f1d3a102db3962f426db5614d9aaa38ecee9e53cae8a40b7c48414d5c2225",
+          "size": 4678
+        },
+        {
+          "path": "templates/RELEASE_HANDOFF.md",
+          "sha256": "sha256:8ec1766ec50638ca01295990201740ad3001b066174dd8d79119ee8f1d4f8381",
+          "size": 1953
+        }
+      ],
+      "skills": [],
+      "task": [
+        {
+          "path": ".agents/tasks/benchmark-product-outcome.md",
+          "sha256": "sha256:b1bab5815724a831a4cce75ee978d6a7c48947fc6f3ac0c19f60d6a9dbee877d",
+          "size": 324
+        }
+      ]
+    }
+  }
+}

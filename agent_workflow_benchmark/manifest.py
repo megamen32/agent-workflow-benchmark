@@ -18,6 +18,7 @@ class ManifestError(ValueError):
 
 REQUIRED_ROOT = ("manifest_version", "campaign", "environment", "arms", "scenarios")
 PINNED_IMAGE = re.compile(r"^.+@sha256:[0-9a-f]{64}$")
+IMAGE_ID = re.compile(r"^sha256:[0-9a-f]{64}$")
 
 
 def _require(mapping: dict[str, Any], key: str, where: str) -> Any:
@@ -86,12 +87,28 @@ def load_manifest(path: str | Path) -> tuple[dict[str, Any], Path]:
             raise ManifestError(f"{where}.container must be a mapping")
         image = _require(container, "image", f"{where}.container")
         digest = _require(container, "digest", f"{where}.container")
-        if not isinstance(image, str) or not PINNED_IMAGE.fullmatch(image):
-            raise ManifestError(f"{where}.container.image must use an immutable @sha256 digest")
-        if digest != image.rsplit("@", 1)[1]:
+        local_image_id = container.get("image_id")
+        registry_pinned = isinstance(image, str) and PINNED_IMAGE.fullmatch(image)
+        local_pinned = bool(container.get("allow_local_image_id")) and isinstance(image, str) and IMAGE_ID.fullmatch(digest or "")
+        if not registry_pinned and not local_pinned:
+            raise ManifestError(f"{where}.container.image must use an immutable @sha256 digest or an explicitly allowed local image ID")
+        if registry_pinned and digest != image.rsplit("@", 1)[1]:
             raise ManifestError(f"{where}.container.digest must match the image digest")
+        if local_pinned:
+            if not isinstance(local_image_id, str) or local_image_id != digest:
+                raise ManifestError(f"{where}.container.image_id must match the local immutable digest")
         if container.get("platform") not in {None, "linux/amd64", "linux/arm64"}:
             raise ManifestError(f"{where}.container.platform must be linux/amd64 or linux/arm64")
+        auth = arm.get("auth")
+        if auth is not None:
+            if not isinstance(auth, dict):
+                raise ManifestError(f"{where}.auth must be a mapping")
+            host_env = _require(auth, "host_env", f"{where}.auth")
+            target = _require(auth, "container_path", f"{where}.auth")
+            if not isinstance(host_env, str) or not host_env:
+                raise ManifestError(f"{where}.auth.host_env must be a non-empty environment variable name")
+            if not isinstance(target, str) or not target.startswith("/"):
+                raise ManifestError(f"{where}.auth.container_path must be an absolute container path")
         for level in arm["topology"]["levels"]:
             if level["harness"] != harness:
                 raise ManifestError(f"{where} topology levels must use the arm harness container")

@@ -61,6 +61,12 @@ output additionally depends on the declared provider route and its inference
 behavior; campaigns must record model ID, endpoint class, pricing basis, and
 repetition seed, and should publish the full transcript for audit.
 
+For a local-only image that has not been pushed to a registry, a manifest may
+explicitly set `allow_local_image_id: true` and provide the exact Docker image
+content ID in both `digest` and `image_id`. The runner then verifies `.Id` before
+execution and records `verification: local-image-id`. This mode cannot pull the
+image and is not a substitute for a registry digest in a public release.
+
 ## Benchmark source snapshots
 
 An arm may declare benchmark-only source inputs. Before that cell starts, the
@@ -92,3 +98,12 @@ mounted read-only at the declared container target. The runner copies
 workspace, while the read-only mount preserves any absolute role paths used by
 the workflow package. A scenario fixture cannot silently replace those marker
 files.
+
+Codex auth is configured separately through an `auth.host_env` variable. The
+runner resolves that host path only at execution time, mounts it read-only at
+`auth.container_path`, and never serializes the host path or credential into a
+manifest or transcript.
+
+The LHC campaign passes Codex's sandbox bypass only inside the pinned Docker
+container. Docker is the isolation boundary for this benchmark; the flag is
+not a host-side default and is not enabled by the generic adapter.
