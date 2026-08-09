@@ -2,18 +2,32 @@
 
 ## Principle
 
-The unit being compared is `workflow + harness + model topology`, not a model
-in isolation. The topology records five roles:
+The unit being compared is `workflow + harness + declared model topology`, not a
+model in isolation. A topology is an ordered list of zero to three model tiers:
 
 ```text
-Adviser (expensive, fixed) ─┐
-Overseer (expensive, fixed) ├→ Lead → Worker
-Critic (expensive, fixed) ──┘
+smart mentor → medium Lead → cheap Worker
 ```
 
-Adviser, Overseer, and Critic are held constant between arms. Lead and Worker
-are the arm's declared pair. A lead may delegate to a worker, and that
-delegation is part of the workflow being measured.
+The list is descriptive, not prescriptive:
+
+- zero child/delegation levels are valid;
+- one model level is valid;
+- two levels are valid, such as smart Lead → cheap Worker;
+- three levels are valid, such as smart Adviser → medium Lead → cheap Worker.
+
+Do not add a Worker to a one-model workflow, add a third tier to a two-tier
+workflow, or add parallel lanes to a sequential workflow. Sequential
+delegation is still valid and is represented as `mode: sequential` with
+`max_concurrent_children: 1`; parallelism is measured separately from topology
+with that limit and the actual child count. Optional
+roles (Adviser, Overseer, Critic, Reviewer, Tester) are declared only when the
+workflow invokes them.
+
+If the workflow has an explicit model-selection rule, use it. Otherwise use the
+best available model inside the campaign's declared budget profile and record
+that fallback. The cheap profile is a pilot, not a claim about normal-model
+production quality.
 
 ## Matched run
 
@@ -27,11 +41,11 @@ For every arm and scenario:
 6. discard only infrastructure-invalid runs, recording why and whether a
    matched replacement was purchased.
 
-The workflow may use its normal child-agent mechanism. The harness must record
-all five role model IDs rather than silently replacing any of them. A harness
-adapter must expose the worker-model override to the workflow;
-passing only one model to the outer CLI is not evidence that the topology was
-actually exercised.
+The workflow may use its normal child-agent mechanism. The harness records every
+declared tier and optional role that actually runs; absent tiers are recorded as
+absent, not synthesized. A harness adapter must expose declared model overrides
+when the workflow supports them. Passing only one model to an outer CLI is not
+evidence that a multi-tier topology was exercised.
 
 ## Two separate result axes
 
@@ -49,11 +63,11 @@ Every campaign records:
 
 - workflow commit or release;
 - harness and version;
-- lead and worker model IDs;
-- adviser, overseer, and critic model IDs and proof that they were held
-  constant;
+- declared topology levels, role assignments, and model IDs;
+- actual child/delegation count and parallelism limit;
+- optional judgement-role IDs only when those roles run;
 - scenario and fixture revisions;
-- provider route and pricing snapshot, without secrets;
+- provider route and dated pricing snapshot, without secrets;
 - repetition count and order randomisation seed;
 - invalid-run and replacement policy;
 - raw and normalized result locations.
@@ -63,3 +77,15 @@ Every campaign records:
 Credentials are supplied at runtime. Public configuration may contain model
 aliases and endpoint names, but never API keys, bearer tokens, private host
 paths, or raw user transcripts.
+
+## Pricing precedence
+
+Record the highest-authority available basis:
+
+1. provider invoice or account-effective cost;
+2. provider's official published price;
+3. a dated `models.dev` snapshot;
+4. `null` when the route is subscription, relay, local, or otherwise unpriced.
+
+Never turn an absent price into `$0.00`. Report tokens even when money is
+unknown.

@@ -4,21 +4,28 @@ Each line in the result file is one completed scenario attempt:
 
 ```json
 {
-  "campaign": "two-level-workflow-comparison",
+  "campaign": "declared-topology-comparison",
   "arm": "lhc-l0",
   "workflow_ref": "lhc-l0",
   "scenario": "verification-phantom-completion",
   "attempt": 1,
   "harness": "opencode",
-  "adviser_model": "configured-expensive-adviser",
-  "lead_model": "luna-5.4",
-  "worker_model": "gpt-5.4-mini",
+  "topology": {
+    "levels": [
+      {"id": "mentor", "roles": ["adviser"], "model": "configured-adviser"},
+      {"id": "lead", "roles": ["lead"], "model": "luna-5.4"},
+      {"id": "worker", "roles": ["worker"], "model": "gpt-5.4-mini"}
+    ],
+    "parallelism": {"mode": "sequential", "max_concurrent_children": 1, "actual_children": 2}
+  },
+  "model_selection": {"policy": "declared", "budget_profile": "cheap", "fallback": false},
   "status": "pass",
   "wall_clock_seconds": 123.4,
   "input_tokens": 10000,
   "output_tokens": 2000,
   "total_tokens": 12000,
-  "cost_usd": 0.12,
+  "cost_usd": null,
+  "pricing": {"basis": "models.dev", "snapshot_date": "2026-08-09"},
   "invalid": false,
   "failure_category": null
 }

@@ -3,47 +3,62 @@ schema_version: 1
 # Public example. Provider credentials are injected by environment or the
 # selected harness and never belong in this file.
 campaign:
-  name: two-level-workflow-comparison
+  name: declared-topology-comparison
   scenario_repetitions: 1
   randomize_order: true
   no_cross_run_memory: true
   rerun_superpowers: false
+  model_selection:
+    unspecified_policy: best_available_within_budget
+    budget_profile: cheap
+    normal_profile_is_separate_campaign: true
+  pricing:
+    preferred_basis: provider_effective_cost
+    fallback_basis: models.dev
+    snapshot_date: 2026-08-09
+    missing_or_subscription_cost: null
 
 arms:
   - id: lhc-l0
     workflow_ref: lhc-l0
-    adviser:
-      model: oc/gpt-5.6-terra
-      fixed_across_arms: true
-    overseer:
-      model: oc/gpt-5.6-terra
-      fixed_across_arms: true
-    critic:
-      model: oc/gpt-5.6-terra
-      fixed_across_arms: true
-    lead:
-      harness: codex
-      model: oc/gpt-5.6-luna
-    worker:
-      harness: codex
-      model: oc/gpt-5.4-mini
+    topology:
+      levels:
+        - id: mentor
+          roles: [adviser]
+          harness: codex
+          model: configured-adviser
+        - id: lead
+          roles: [lead]
+          harness: codex
+          model: oc/gpt-5.6-luna
+        - id: worker
+          roles: [worker]
+          harness: codex
+          model: oc/gpt-5.4-mini
+      parallelism:
+        mode: sequential
+        max_concurrent_children: 1
+    optional_roles: [overseer, critic]
   - id: lhc-l1
     workflow_ref: lhc-l1
-    adviser:
-      model: oc/gpt-5.6-terra
-      fixed_across_arms: true
-    overseer:
-      model: oc/gpt-5.6-terra
-      fixed_across_arms: true
-    critic:
-      model: oc/gpt-5.6-terra
-      fixed_across_arms: true
-    lead:
-      harness: codex
-      model: oc/minimax-m3
-    worker:
-      harness: codex
-      model: oc/minimax-m2.7
+    topology:
+      levels:
+        - id: mentor
+          roles: [adviser]
+          harness: codex
+          model: configured-adviser
+        - id: lead
+          roles: [lead]
+          harness: codex
+          model: oc/minimax-m3
+        - id: worker
+          roles: [worker]
+          harness: codex
+          model: oc/minimax-m2.7
+      parallelism:
+        mode: sequential
+        max_concurrent_children: 1
+    optional_roles: [overseer, critic]
 
 metrics:
   primary:
