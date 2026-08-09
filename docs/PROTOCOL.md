@@ -3,15 +3,17 @@
 ## Principle
 
 The unit being compared is `workflow + harness + model topology`, not a model
-in isolation. The topology is explicitly three-level:
+in isolation. The topology records five roles:
 
 ```text
-Adviser (expensive, fixed) → Lead → Worker
+Adviser (expensive, fixed) ─┐
+Overseer (expensive, fixed) ├→ Lead → Worker
+Critic (expensive, fixed) ──┘
 ```
 
-The Adviser is held constant between arms. Lead and Worker are the arm's
-declared pair. A lead may delegate to a worker, and that delegation is part of
-the workflow being measured.
+Adviser, Overseer, and Critic are held constant between arms. Lead and Worker
+are the arm's declared pair. A lead may delegate to a worker, and that
+delegation is part of the workflow being measured.
 
 ## Matched run
 
@@ -26,8 +28,8 @@ For every arm and scenario:
    matched replacement was purchased.
 
 The workflow may use its normal child-agent mechanism. The harness must record
-the adviser, lead, and worker model IDs rather than silently replacing any of
-them. A harness adapter must expose the worker-model override to the workflow;
+all five role model IDs rather than silently replacing any of them. A harness
+adapter must expose the worker-model override to the workflow;
 passing only one model to the outer CLI is not evidence that the topology was
 actually exercised.
 
@@ -48,7 +50,8 @@ Every campaign records:
 - workflow commit or release;
 - harness and version;
 - lead and worker model IDs;
-- adviser model ID and proof that it was held constant;
+- adviser, overseer, and critic model IDs and proof that they were held
+  constant;
 - scenario and fixture revisions;
 - provider route and pricing snapshot, without secrets;
 - repetition count and order randomisation seed;

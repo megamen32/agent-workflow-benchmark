@@ -13,25 +13,37 @@ arms:
   - id: lhc-l0
     workflow_ref: lhc-l0
     adviser:
-      model: gpt-5.6-terra
+      model: oc/gpt-5.6-terra
+      fixed_across_arms: true
+    overseer:
+      model: oc/gpt-5.6-terra
+      fixed_across_arms: true
+    critic:
+      model: oc/gpt-5.6-terra
       fixed_across_arms: true
     lead:
-      harness: opencode
-      model: gpt-5.6-luna
+      harness: codex
+      model: oc/gpt-5.6-luna
     worker:
-      harness: opencode
-      model: gpt-5.4-mini
+      harness: codex
+      model: oc/gpt-5.4-mini
   - id: lhc-l1
     workflow_ref: lhc-l1
     adviser:
-      model: gpt-5.6-terra
+      model: oc/gpt-5.6-terra
+      fixed_across_arms: true
+    overseer:
+      model: oc/gpt-5.6-terra
+      fixed_across_arms: true
+    critic:
+      model: oc/gpt-5.6-terra
       fixed_across_arms: true
     lead:
-      harness: opencode
-      model: minimax/MiniMax-M3
+      harness: codex
+      model: oc/minimax-m3
     worker:
-      harness: opencode
-      model: minimax/MiniMax-M2.7
+      harness: codex
+      model: oc/minimax-m2.7
 
 metrics:
   primary:
