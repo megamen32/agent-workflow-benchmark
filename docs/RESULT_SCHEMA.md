@@ -8,6 +8,7 @@ Each line in the result file is one completed scenario attempt:
   "arm": "lhc-l0",
   "workflow_ref": "lhc-l0",
   "scenario": "verification-phantom-completion",
+  "scenario_track": "workflow_guard",
   "attempt": 1,
   "harness": "opencode",
   "topology": {

@@ -67,6 +67,24 @@ an explicitly secondary, user-selected view with its weights published.
 
 The raw dimensions remain authoritative.
 
+## Scenario tracks
+
+Do not merge different kinds of evidence into one quality number:
+
+- `product_outcome` — complex bug fixes, features, refactors, integration and
+  user-visible behavior checked by hidden/deterministic product tests;
+- `workflow_guard` — verification order, honest completion, unnecessary fan-out,
+  scope/cost discipline, and other process invariants;
+- `hybrid` — a product task with an explicit workflow invariant.
+
+The current five-scenario L0/L1 pilot is `workflow_guard`. Its 80% versus 60%
+result says that L0 was more reliable on these process guards; it is not a
+claim that L0 is generally better at difficult engineering tasks. A publication
+must show track-level rates separately. In particular, a rule such as
+"verify a claimed passing test before committing" measures trust and evidence
+ordering. It is not a universal ban on every commit before every test, and it
+must not be mislabeled as a complete TDD or product-quality benchmark.
+
 ## Reproducibility record
 
 Every campaign records:

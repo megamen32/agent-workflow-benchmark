@@ -4,6 +4,7 @@ schema_version: 1
 # selected harness and never belong in this file.
 campaign:
   name: declared-topology-comparison
+  scenario_track: workflow_guard
   scenario_repetitions: 1
   randomize_order: true
   no_cross_run_memory: true

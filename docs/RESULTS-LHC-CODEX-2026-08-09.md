@@ -1,6 +1,6 @@
-# [LastHumanCommit](https://github.com/megamen32/LastHumanCommit) Codex pilot: L0 vs L1
+# [LastHumanCommit](https://github.com/megamen32/LastHumanCommit) Codex workflow-guard pilot: L0 vs L1
 
-This is the first pilot of the public protocol. It compares five neutral
+This is the first workflow-guard pilot of the public protocol. It compares five neutral
 Quorum scenarios in Docker with Codex as the coding harness. Superpowers was
 not rerun; its published results are not part of these cells.
 
@@ -59,6 +59,11 @@ Failures:
 
 Quality, time, tokens, and cost remain separate dimensions. No aggregate winner
 is claimed.
+
+This result is about workflow guards, not general engineering quality. In
+particular, the verification scenario checks that an agent does not trust a
+subagent's "all tests pass" claim before its own check; it does not establish a
+universal rule that every kind of commit must follow every test.
 
 The complete pilot run artifacts are preserved locally under the Quorum results
 directories. They are not yet public because the transcripts must first be
