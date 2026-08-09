@@ -18,12 +18,13 @@ that every native Codex child used the declared Worker model. Therefore these
 results are a valid workflow/harness pilot, but not yet a final claim about the
 complete five-role model topology.
 
-The canonical LHC role mapping behind the two arms is: Adviser=`5.6-sol`,
-Overseer=`5.6-terra`, Critic=`5.6-terra`; L0 is Lead Luna → Worker GPT-5.4
-Mini, and L1 is Lead MiniMax M3 → Worker MiniMax M2.7. These are two complete
-Lead→Worker configurations with the same expensive judgement tier, not a
-single-model comparison. The worker names remain declarations until the
-Codex adapter emits a child-session model receipt.
+The canonical LHC role hints behind the two arms are Adviser=`5.6-sol`,
+Overseer=`5.6-terra`, and Critic=`5.6-terra`; this pilot did not invoke a
+separate Sol generation. L0 is Lead Luna → Worker GPT-5.4 Mini, and L1 is
+Lead MiniMax M3 → Worker MiniMax M2.7. These are two complete Lead→Worker
+configurations with the same expensive judgement tier, not a single-model
+comparison. The worker names remain declarations until the Codex adapter emits
+a child-session model receipt.
 
 ## Results
 
