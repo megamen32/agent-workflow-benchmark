@@ -1,0 +1,47 @@
+schema_version: 1
+
+# Public example. Provider credentials are injected by environment or the
+# selected harness and never belong in this file.
+campaign:
+  name: two-level-workflow-comparison
+  scenario_repetitions: 1
+  randomize_order: true
+  no_cross_run_memory: true
+  rerun_superpowers: false
+
+arms:
+  - id: lhc-l0
+    workflow_ref: lhc-l0
+    adviser:
+      model: configured-expensive-adviser
+      fixed_across_arms: true
+    lead:
+      harness: opencode
+      model: luna-5.4
+    worker:
+      harness: opencode
+      model: gpt-5.4-mini
+  - id: lhc-l1
+    workflow_ref: lhc-l1
+    adviser:
+      model: configured-expensive-adviser
+      fixed_across_arms: true
+    lead:
+      harness: opencode
+      model: minimax-m3
+    worker:
+      harness: opencode
+      model: minimax-m2.7
+
+metrics:
+  primary:
+    - pass_rate
+  separate:
+    - wall_clock_seconds
+    - input_tokens
+    - output_tokens
+    - total_tokens
+    - cost_usd
+  optional_aggregate:
+    enabled: false
+    reason: two-criteria optimisation is not universally ordered
