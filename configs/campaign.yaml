@@ -13,25 +13,25 @@ arms:
   - id: lhc-l0
     workflow_ref: lhc-l0
     adviser:
-      model: configured-expensive-adviser
+      model: gpt-5.6-terra
       fixed_across_arms: true
     lead:
       harness: opencode
-      model: luna-5.4
+      model: gpt-5.6-luna
     worker:
       harness: opencode
       model: gpt-5.4-mini
   - id: lhc-l1
     workflow_ref: lhc-l1
     adviser:
-      model: configured-expensive-adviser
+      model: gpt-5.6-terra
       fixed_across_arms: true
     lead:
       harness: opencode
-      model: minimax-m3
+      model: minimax/MiniMax-M3
     worker:
       harness: opencode
-      model: minimax-m2.7
+      model: minimax/MiniMax-M2.7
 
 metrics:
   primary:

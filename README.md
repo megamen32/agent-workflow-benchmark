@@ -14,8 +14,8 @@ orchestration. A normal campaign has three explicit model levels:
 
 ```text
 Adviser (expensive, fixed) → Lead model → Worker model
-                            Luna 5.4   → GPT-5.4 Mini
-                            MiniMax M3 → MiniMax M2.7
+                            GPT-5.6 Luna → GPT-5.4 Mini
+                            MiniMax M3   → MiniMax M2.7
 ```
 
 The Adviser is a separate expensive planning/review role and is held constant
