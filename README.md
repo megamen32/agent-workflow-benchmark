@@ -1,75 +1,38 @@
 # Agent Workflow Benchmark
 
-> Compare AI coding workflows by the result they deliver, the time they take,
-> and the money and tokens they consume.
+Модели сами по себе ничего не гарантируют. Реальный результат создаёт
+workflow: обвязка, правила работы, делегация, проверка и выбор моделей.
 
-Most agent benchmarks compare models. This project compares the workflow around
-the model: orchestration, delegation, tool use, verification, and the model
-selection policy. A workflow may have no delegation, one model, two tiers, or
-three tiers. The benchmark never adds a child, a parallel lane, or a judgement
-role that the workflow does not declare.
+У обвязок много, а общего benchmark почти нет. Этот проект сравнивает именно
+workflow, не заставляя его быть LHC, многоуровневым или параллельным.
 
-## The core experiment
+Мы берём три взаимодополняющих источника:
 
-Each workflow runs the same scenario with the same fixture and its own native
-orchestration. A campaign records an ordered topology of zero to three model
-tiers. A three-tier workflow may look like this:
+- **Quorum / Superpowers Evals** — основной behavioral benchmark: реальные
+  coding-agent CLI, сценарии, deterministic checks и receipts. Superpowers —
+  самый популярный workflow из рассмотренных.
+- **AI Workflow Benchmark** — независимая проверка на real-repo задачах, чтобы
+  не судить все workflow только по тестам Superpowers.
+- **SkillsBench** — отдельная проверка эффекта skills, когда workflow
+  переходит от монолитных features к skills.
 
-```text
-smart mentor/adviser → medium Lead → cheap Worker
-```
+ECC используется как источник A/B-методики; gstack и остальные популярные
+workflow входят в обзор, но не имеют подходящего общего переносимого корпуса.
+Подробное обоснование: [WHY-BENCHMARKS.md](docs/WHY-BENCHMARKS.md).
 
-Two-tier and one-tier workflows remain exactly that. A workflow with zero
-parallelism remains sequential; parallelism is a separate measured property,
-not a required topology level. Optional roles such as Adviser, Overseer,
-Critic, Reviewer, or Tester are recorded only when the workflow actually uses
-them.
+Главные критерии — качество и цена. Скорость вторична: если агент довёл дело
+до конца, когда пользователь спит, лишние минуты не важны. Токены — только
+диагностика: миллион токенов может стоить центы или десятки тысяч долларов.
+При нулевом числе успешных задач цена за успех не ранжируется вообще.
 
-If a workflow documents model selection, the harness follows that policy. If it
-does not, the campaign chooses the strongest available model in the selected
-test budget and records the fallback. Cheap and normal campaigns are separate
-profiles, so a cheap pilot can later be repeated with normal models without
-changing the workflow definition.
-
-## What we report
-
-The benchmark keeps separate dimensions:
-
-- quality: scenario pass rate and failure categories;
-- time: wall-clock and critical-path time;
-- cost: effective provider cost and tokens per solved scenario.
-
-Pricing is pinned to a dated snapshot. `models.dev` is a useful open catalog and
-list-price fallback, but a zero or missing price is not treated as free: for a
-subscription, relay, or local model the effective cost is `null` unless the
-provider/account billing basis is known.
-
-There is no mandatory single winner. An optional aggregate is clearly labelled
-as a convenience ranking, because two-criteria optimisation has no universally
-correct answer.
-
-## Status
-
-This repository contains the public protocol and runner components. The first
-campaign is an L0/L1 comparison of a workflow before and after a skills
-migration. It is intentionally reproducible without publishing credentials,
-private endpoints, or raw private transcripts.
-
-## Quick start
+Топология workflow записывается как есть: от нуля до трёх уровней. Benchmark
+не добавляет Worker, Adviser или параллельность, которых у workflow нет.
 
 ```bash
 python3 scripts/summarize_results.py results.jsonl
 ```
 
-The input is newline-delimited JSON. See [the protocol](docs/PROTOCOL.md) and
-[the campaign configuration](configs/campaign.yaml).
+См. [протокол](docs/PROTOCOL.md), [конфигурацию](configs/campaign.yaml) и
+[схему результата](docs/RESULT_SCHEMA.md).
 
-## Design
-
-- [Benchmark protocol](docs/PROTOCOL.md)
-- [Campaign configuration](configs/campaign.yaml)
-- [Result schema](docs/RESULT_SCHEMA.md)
-
-## License
-
-MIT. See [LICENSE](LICENSE).
+MIT — [LICENSE](LICENSE).

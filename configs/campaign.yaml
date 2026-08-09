@@ -63,12 +63,15 @@ arms:
 metrics:
   primary:
     - pass_rate
-  separate:
+    - cost_per_success_usd
+  secondary:
     - wall_clock_seconds
+  diagnostic:
     - input_tokens
     - output_tokens
     - total_tokens
-    - cost_usd
+  separate:
+    - total_effective_cost_usd
   optional_aggregate:
     enabled: false
     reason: two-criteria optimisation is not universally ordered

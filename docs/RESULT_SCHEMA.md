@@ -20,11 +20,13 @@ Each line in the result file is one completed scenario attempt:
   },
   "model_selection": {"policy": "declared", "budget_profile": "cheap", "fallback": false},
   "status": "pass",
+  "successful_task": true,
   "wall_clock_seconds": 123.4,
   "input_tokens": 10000,
   "output_tokens": 2000,
   "total_tokens": 12000,
   "cost_usd": null,
+  "cost_per_success_usd": null,
   "pricing": {"basis": "models.dev", "snapshot_date": "2026-08-09"},
   "invalid": false,
   "failure_category": null
@@ -34,3 +36,8 @@ Each line in the result file is one completed scenario attempt:
 Unknown measurements are `null`, not zero. Invalid infrastructure attempts are
 retained and excluded from pass-rate denominators only under the published
 replacement policy.
+
+Campaign summaries additionally report `pass_rate`, `successful_tasks`,
+`total_effective_cost_usd`, `cost_per_success_usd`, and wall-clock. Set
+`cost_per_success_usd` to `null` when `successful_tasks == 0`; never turn that
+case into a cheap winner.

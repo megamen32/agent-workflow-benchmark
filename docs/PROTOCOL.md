@@ -47,15 +47,25 @@ absent, not synthesized. A harness adapter must expose declared model overrides
 when the workflow supports them. Passing only one model to an outer CLI is not
 evidence that a multi-tier topology was exercised.
 
-## Two separate result axes
+## Ranking priorities
 
-Quality is reported as pass rate with failure categories. Resource efficiency is
-reported independently as wall-clock, input/output/total tokens, and provider
-cost. Never declare a workflow the winner by hiding a quality loss inside a
-cheaper score, or a cost loss inside a higher pass rate.
+Quality and price are the primary dimensions. Report quality as pass rate,
+successful-task count, and failure categories. Report price as total effective
+cost and cost per successful task. If successful-task count is zero, cost per
+success is not a number and must not be used to rank that workflow; its spend is
+still reported separately.
 
-An aggregate score is allowed only as an explicitly secondary, user-selected
-view with its weights published. The raw dimensions remain authoritative.
+Wall-clock is a secondary dimension: useful when the user is waiting, irrelevant
+when the user is away and completion/cost are the real concerns. Input/output/
+total tokens are diagnostics only. Token count without a price basis is not a
+cost ranking.
+
+Never declare a workflow the winner by hiding a quality loss inside a cheaper
+score, or a cost loss inside a higher pass rate. When quality and price conflict,
+publish both axes and the Pareto frontier. An aggregate score is allowed only as
+an explicitly secondary, user-selected view with its weights published.
+
+The raw dimensions remain authoritative.
 
 ## Reproducibility record
 
@@ -71,6 +81,8 @@ Every campaign records:
 - repetition count and order randomisation seed;
 - invalid-run and replacement policy;
 - raw and normalized result locations.
+- total effective cost and cost per successful task; the latter is `null` when
+  the workflow solved zero tasks;
 
 ## Security boundary
 
