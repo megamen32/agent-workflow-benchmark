@@ -30,6 +30,12 @@ not independent facts.
 - [Claw-SWE-Bench paper](https://arxiv.org/abs/2606.12344) and
   [adapter implementation](https://github.com/opensquilla/claw-swe-bench) —
   heterogeneous harness comparison, fixed runtime contract, and cost axis.
+- [RoadmapBench](https://arxiv.org/abs/2605.15846) — long-horizon version
+  upgrades across large multi-file repositories.
+- [LongCLI-Bench](https://aclanthology.org/2026.findings-acl.1497/) — long
+  sequential command-line engineering tasks.
+- [SlopCodeBench](https://arxiv.org/abs/2603.24755) — degradation and extension
+  robustness across iterative coding checkpoints.
 - [Terminal-Bench 2.0 repository](https://github.com/harbor-framework/terminal-bench-2)
   and [paper](https://arxiv.org/abs/2601.11868) — hard terminal tasks in
   computer environments.
@@ -74,6 +80,9 @@ not independent facts.
 - [MCP-Universe](https://github.com/SalesforceAIResearch/MCP-Universe) and
   [paper](https://arxiv.org/abs/2508.14704) — unfamiliar real-world MCP
   servers and long-horizon tool use.
+- [MCP Security Bench](https://iclr.cc/virtual/2026/poster/10007929) and
+  [MCPTox](https://ojs.aaai.org/index.php/AAAI/article/view/40895) — MCP attack
+  resistance and tool poisoning; security tracks, not productivity scores.
 - [MCPMark documentation](https://mcpmark.ai/docs/introduction) and
   [repository](https://github.com/eval-sys/mcpmark) — cross-service MCP tasks,
   Docker runner, and service isolation guidance.
@@ -134,12 +143,31 @@ not independent facts.
   and knowledge/execution axes.
 - [MemGUI-Bench](https://lgy0404.github.io/MemGUI-Bench/) — mobile GUI memory
   and cross-app workflows.
+- [STATE-Bench](https://github.com/microsoft/STATE-Bench) — open, memory-agnostic
+  stateful enterprise tasks that measure whether experience improves reliability,
+  completion, and efficiency.
 - [AIRS-Bench](https://github.com/facebookresearch/airs-bench) — 20 ML research
   tasks with executable metric comparison against published SOTA.
 - [DeepSearchQA](https://arxiv.org/abs/2601.20975) — 900 difficult multi-step
   information-seeking tasks.
 - [AutoResearchBench](https://arxiv.org/abs/2604.25256) — deep and wide
   scientific literature discovery.
+- [PaperBench](https://arxiv.org/abs/2504.01848) — replication of 20 ICML papers.
+- [MLE-bench](https://openai.com/index/mle-bench/) — Kaggle-style ML engineering
+  agent evaluation.
+- [ScienceAgentBench](https://arxiv.org/abs/2410.05080) — multimodal,
+  data-driven scientific discovery.
+- [CyberGym-E2E](https://www.cybergym.io/cybergym-e2e/) — end-to-end security
+  discovery, proof, and patching in real projects.
+- [DataAgentBench](https://github.com/ucbepic/DataAgentBench) — executable data
+  question answering and data-agent tasks.
+- [AI Spreadsheet Benchmark](https://huggingface.co/datasets/rowshq/aispreadsheetbenchmark)
+  — 53 realistic spreadsheet workflows.
+- [Open Agent Leaderboard](https://huggingface.co/blog/ibm-research/open-agent-leaderboard)
+  — open attempt to compare full agent systems rather than only models.
+- [Joule Index](https://joule.blankline.org/) and its
+  [method paper](https://blankline.org/research/joule-index/paper) — explicit
+  dollar, energy, attention, and merge-readiness reporting.
 
 ## Fresh discovery sources and secondary material
 

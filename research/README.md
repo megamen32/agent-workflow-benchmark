@@ -105,6 +105,15 @@ found several important additions:
 - **Closest to the MCP problem:** [MCP-Universe](https://github.com/SalesforceAIResearch/MCP-Universe)
   adds large unfamiliar tool spaces and long-horizon composition to MCP
   evaluation.
+- **New outcome/cost/memory signals:** [STATE-Bench](https://github.com/microsoft/STATE-Bench)
+  checks whether experience improves enterprise-task reliability; [RoadmapBench](https://arxiv.org/abs/2605.15846)
+  and [LongCLI-Bench](https://aclanthology.org/2026.findings-acl.1497/) extend
+  the horizon; [Joule Index](https://joule.blankline.org/) puts dollar and
+  energy cost next to coding outcome.
+- **Specialized but useful layers:** [PaperBench](https://arxiv.org/abs/2504.01848),
+  [MLE-bench](https://openai.com/index/mle-bench/), [CyberGym-E2E](https://www.cybergym.io/cybergym-e2e/),
+  [DataAgentBench](https://github.com/ucbepic/DataAgentBench), and the
+  [AI Spreadsheet Benchmark](https://huggingface.co/datasets/rowshq/aispreadsheetbenchmark).
 
 So the answer is **not “there are no other benchmarks”**. There are many more;
 the actual shortage is a neutral, open benchmark that simultaneously allows an
