@@ -19,8 +19,10 @@ campaign:
     missing_or_subscription_cost: null
   artifacts:
     transcripts:
-      required_for_published_attempt: true
-      format: jsonl.zst
+      required_for_published_campaign: true
+      format: campaign-transcripts.tar.zst
+      contents: [campaign-manifest.json, transcripts.jsonl]
+      one_archive_per_campaign: true
       distribution: github_release_asset
       manifest_and_sha256_in_git: true
       secret_and_privacy_redaction_required: true

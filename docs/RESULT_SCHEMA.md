@@ -29,9 +29,9 @@ Each line in the result file is one completed scenario attempt:
   "cost_per_success_usd": null,
   "pricing": {"basis": "models.dev", "snapshot_date": "2026-08-09"},
   "transcript": {
-    "format": "jsonl.zst",
-    "sha256": "<sha256>",
-    "release_asset_url": "https://github.com/example/repo/releases/download/campaign/run.jsonl.zst",
+    "archive": "campaign-transcripts.tar.zst",
+    "member": "transcripts.jsonl",
+    "dialog_only": true,
     "redacted": true
   },
   "invalid": false,
@@ -48,6 +48,6 @@ Campaign summaries additionally report `pass_rate`, `successful_tasks`,
 `cost_per_success_usd` to `null` when `successful_tasks == 0`; never turn that
 case into a cheap winner.
 
-Published attempts must include a complete sanitized transcript artifact. The
-transcript manifest and SHA-256 are versioned with the result; the compressed
-payload may be distributed as a release asset.
+Published campaigns must include one complete sanitized transcript archive. Its
+two members are `campaign-manifest.json` and the combined `transcripts.jsonl`;
+the archive SHA-256 and release URL are versioned with the campaign result.

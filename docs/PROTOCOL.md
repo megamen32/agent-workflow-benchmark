@@ -81,8 +81,8 @@ Every campaign records:
 - repetition count and order randomisation seed;
 - invalid-run and replacement policy;
 - raw and normalized result locations;
-- the complete sanitized transcript artifact, its compression format, SHA-256,
-  and public release-asset URL;
+- the single campaign transcript archive, its compression format, SHA-256, and
+  public release-asset URL;
 - total effective cost and cost per successful task; the latter is `null` when
   the workflow solved zero tasks;
 
@@ -106,10 +106,17 @@ unknown.
 
 ## Transcript publication
 
-Every published scenario attempt includes its complete transcript, not only a
-summary or final verdict. Store newline-delimited JSON and compress it with
-`zstd` or `gzip`. Keep a manifest and SHA-256 in git; publish the full archive as
-a GitHub Release asset so cloning the benchmark does not download every run.
+Every published campaign includes one archive containing exactly:
+
+```text
+campaign-manifest.json   # verdicts, models, timing, cost, hashes, redaction
+transcripts.jsonl        # all run dialogs concatenated in stable order
+```
+
+Compress the whole combined JSONL stream with `zstd` or `gzip`; do not create a
+separate compressed file for every run. Keep the archive SHA-256 in git and
+publish the archive as one GitHub Release asset so cloning the benchmark does
+not download every run.
 
 Before publication, remove API keys, bearer tokens, cookies, environment
 values, private hostnames, private paths, and unapproved user content. A redacted
