@@ -17,6 +17,13 @@ campaign:
     fallback_basis: models.dev
     snapshot_date: 2026-08-09
     missing_or_subscription_cost: null
+  artifacts:
+    transcripts:
+      required_for_published_attempt: true
+      format: jsonl.zst
+      distribution: github_release_asset
+      manifest_and_sha256_in_git: true
+      secret_and_privacy_redaction_required: true
 
 arms:
   - id: lhc-l0

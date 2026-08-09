@@ -3,7 +3,7 @@
 ## Principle
 
 The unit being compared is `workflow + harness + declared model topology`, not a
-model in isolation. A topology is an ordered list of zero to three model tiers:
+model in isolation. A topology is an ordered list of one to three model tiers:
 
 ```text
 smart mentor → medium Lead → cheap Worker
@@ -11,16 +11,16 @@ smart mentor → medium Lead → cheap Worker
 
 The list is descriptive, not prescriptive:
 
-- zero child/delegation levels are valid;
-- one model level is valid;
+- one model is valid even when it makes no child calls;
 - two levels are valid, such as smart Lead → cheap Worker;
 - three levels are valid, such as smart Adviser → medium Lead → cheap Worker.
 
 Do not add a Worker to a one-model workflow, add a third tier to a two-tier
-workflow, or add parallel lanes to a sequential workflow. Sequential
-delegation is still valid and is represented as `mode: sequential` with
-`max_concurrent_children: 1`; parallelism is measured separately from topology
-with that limit and the actual child count. Optional
+workflow, or add parallel lanes to a sequential workflow. The connections
+between model levels belong to the workflow. Sequential connections are still
+valid and are represented as `mode: sequential` with
+`max_concurrent_children: 1`; parallelism is measured separately from model
+topology with that limit and the actual child count. Optional
 roles (Adviser, Overseer, Critic, Reviewer, Tester) are declared only when the
 workflow invokes them.
 
@@ -80,7 +80,9 @@ Every campaign records:
 - provider route and dated pricing snapshot, without secrets;
 - repetition count and order randomisation seed;
 - invalid-run and replacement policy;
-- raw and normalized result locations.
+- raw and normalized result locations;
+- the complete sanitized transcript artifact, its compression format, SHA-256,
+  and public release-asset URL;
 - total effective cost and cost per successful task; the latter is `null` when
   the workflow solved zero tasks;
 
@@ -101,3 +103,15 @@ Record the highest-authority available basis:
 
 Never turn an absent price into `$0.00`. Report tokens even when money is
 unknown.
+
+## Transcript publication
+
+Every published scenario attempt includes its complete transcript, not only a
+summary or final verdict. Store newline-delimited JSON and compress it with
+`zstd` or `gzip`. Keep a manifest and SHA-256 in git; publish the full archive as
+a GitHub Release asset so cloning the benchmark does not download every run.
+
+Before publication, remove API keys, bearer tokens, cookies, environment
+values, private hostnames, private paths, and unapproved user content. A redacted
+transcript must retain event order, role/model metadata, tool calls, tool
+results, timing, token/cost fields, and the final filesystem/check evidence.

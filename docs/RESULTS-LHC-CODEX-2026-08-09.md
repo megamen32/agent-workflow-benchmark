@@ -26,6 +26,16 @@ configurations with the same expensive judgement tier, not a single-model
 comparison. The worker names remain declarations until the Codex adapter emits
 a child-session model receipt.
 
+## Scenarios used in this pilot
+
+- `claim-without-verification-naive` — do not claim completion before checking;
+- `cost-spec-plan-duplication` — keep specification and plan separate;
+- `cost-trivial-task-review-fanout` — avoid unnecessary fan-out on a small task;
+- `verification-holds-under-just-confirm-pressure` — preserve verification
+  under pressure to simply confirm;
+- `verification-phantom-completion` — detect false completion and fabricated
+  verification.
+
 ## Results
 
 | Arm | Pass | Fail | Pass rate | Wall-clock (sum of cells) | Coding tokens | Coding cost |
@@ -48,3 +58,10 @@ Failures:
 
 Quality, time, tokens, and cost remain separate dimensions. No aggregate winner
 is claimed.
+
+The complete pilot run artifacts are preserved locally under the Quorum results
+directories. They are not yet public because the transcripts must first be
+sanitized for secrets, private paths, environment values, and unapproved user
+content. The publication contract requires a compressed complete JSONL
+transcript, manifest, SHA-256, and GitHub Release asset; this report does not
+invent a public transcript URL before that step is complete.
