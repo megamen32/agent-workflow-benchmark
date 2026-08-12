@@ -1,5 +1,8 @@
 # Business-first workflow benchmark — 2026-08-12
 
+Public long-form article with every per-task result:
+[`BUSINESS-FIRST-WORKFLOW-BENCHMARK-RU.md`](BUSINESS-FIRST-WORKFLOW-BENCHMARK-RU.md).
+
 ## Claim
 
 На десяти коротких детерминированных JavaScript bugfix/API-contract задачах
@@ -86,8 +89,7 @@ Workflow revisions:
 
 - Manifest: [`configs/business-first-10.yaml`](../configs/business-first-10.yaml)
 - Fixture: [`scenarios/business-first-10/fixture`](../scenarios/business-first-10/fixture)
-- Per-cell receipts and redacted transcript archives:
-  `results/business-first-10-run/`
+- [Published per-cell receipts and redacted transcript archives](https://github.com/megamen32/agent-workflow-benchmark/releases/tag/business-first-10-20260812)
 - Точный as-run manifest встроен в каждый `campaign-transcripts.tar.zst`.
 - Reusable manifest после run получил deterministic Git setup вместо ручного
   nested `.git`; его текущий dry-run SHA-256:

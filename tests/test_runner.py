@@ -10,6 +10,7 @@ from agent_workflow_benchmark.adapters.codex import CodexAdapter
 from agent_workflow_benchmark.adapters.opencode import OpenCodeAdapter
 from agent_workflow_benchmark.manifest import ManifestError, load_manifest, manifest_sha256
 from agent_workflow_benchmark.redaction import redact_text
+from scripts.build_public_evidence import scrub
 from agent_workflow_benchmark.runner import extract_usage, run_campaign
 from agent_workflow_benchmark.snapshot import SnapshotError, materialize_snapshot, snapshot_sha256
 
@@ -106,6 +107,16 @@ class RunnerContractTests(unittest.TestCase):
         self.assertEqual(usage["total_tokens"], 17)
         self.assertEqual(usage["cost_usd"], 0.12)
         self.assertIn("[REDACTED]", redact_text("Authorization: Bearer secret-token"))
+
+    def test_public_evidence_scrubs_credential_shaped_values(self) -> None:
+        value = scrub(
+            {
+                "api": "sk-exampleCredential123456789",
+                "auth": "Authorization: Bearer visible-token",
+            }
+        )
+        self.assertNotIn("sk-", json.dumps(value))
+        self.assertNotIn("visible-token", json.dumps(value))
 
     def test_snapshot_mounts_are_read_only_and_use_materialized_categories(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

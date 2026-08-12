@@ -3,6 +3,17 @@
 This project measures the thing model benchmarks hide: whether a complete
 workflow turns the same capable model stack into a better product result.
 
+## Latest result
+
+**10 tasks × 4 workflows, 40 valid isolated runs:** all arms passed 10/10, but
+plain Codex was the Pareto winner on short local bugfixes. LHC was the most
+efficient full workflow; Superpowers used 2.20× and GSD 7.91× the control
+tokens at the same quality floor.
+
+- [Full Russian article, per-task tables, method and evidence](docs/BUSINESS-FIRST-WORKFLOW-BENCHMARK-RU.md)
+- [Compact result report](docs/RESULTS-BUSINESS-FIRST-10-2026-08-12.md)
+- [Frozen campaign manifest](configs/business-first-10.yaml)
+
 | Workflow revision | Product quality | Effective cost | Time | Status |
 |---|---:|---:|---:|---|
 | [L0](https://github.com/megamen32/LastHumanCommit/releases/tag/lhc-l0-20260809) — current procedural workflow | **1/1 · 100%** | unknown · subscription route | **64.70s** | pilot complete |
