@@ -5,14 +5,14 @@ workflow turns the same capable model stack into a better product result.
 
 ## Latest result
 
-**10 tasks × 4 workflows, 40 valid isolated runs:** all arms passed 10/10, but
-plain Codex was the Pareto winner on short local bugfixes. LHC was the most
-efficient full workflow; Superpowers used 2.20× and GSD 7.91× the control
-tokens at the same quality floor.
+**Hard SWE-bench Verified: 10 real issues × 4 workflows.** GSD resolved 2/10;
+plain Codex, LHC, and Superpowers resolved 1/10 each. The difference is too
+small for a universal winner claim, but this round measures real hidden-test
+quality rather than only workflow overhead.
 
-- [Full Russian article, per-task tables, method and evidence](docs/BUSINESS-FIRST-WORKFLOW-BENCHMARK-RU.md)
-- [Compact result report](docs/RESULTS-BUSINESS-FIRST-10-2026-08-12.md)
-- [Frozen campaign manifest](configs/business-first-10.yaml)
+- [Hard quality benchmark: method, sanitation and per-task results](docs/RESULTS-HARD-SWEBENCH-VERIFIED-10-2026-08-12.md)
+- [Frozen hard campaign](configs/hard-swebench-verified-10.json)
+- [Easy 10/10 round: workflow-overhead baseline](docs/BUSINESS-FIRST-WORKFLOW-BENCHMARK-RU.md)
 
 | Workflow revision | Product quality | Effective cost | Time | Status |
 |---|---:|---:|---:|---|

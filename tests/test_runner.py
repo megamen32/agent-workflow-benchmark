@@ -11,6 +11,7 @@ from agent_workflow_benchmark.adapters.opencode import OpenCodeAdapter
 from agent_workflow_benchmark.manifest import ManifestError, load_manifest, manifest_sha256
 from agent_workflow_benchmark.redaction import redact_text
 from scripts.build_public_evidence import scrub
+from scripts.run_swebench_control_canary import public_prompt
 from agent_workflow_benchmark.runner import extract_usage, run_campaign
 from agent_workflow_benchmark.snapshot import SnapshotError, materialize_snapshot, snapshot_sha256
 
@@ -117,6 +118,26 @@ class RunnerContractTests(unittest.TestCase):
         )
         self.assertNotIn("sk-", json.dumps(value))
         self.assertNotIn("visible-token", json.dumps(value))
+
+    def test_swebench_prompt_excludes_hidden_acceptance(self) -> None:
+        instance = {
+            "problem_statement": "public issue",
+            "patch": "gold solution",
+            "test_patch": "hidden tests",
+            "FAIL_TO_PASS": "hidden failing ids",
+        }
+        prompt = public_prompt(instance, "lhc")
+        self.assertIn("public issue", prompt)
+        self.assertIn("business-first", prompt)
+        self.assertNotIn("gold solution", prompt)
+        self.assertNotIn("hidden tests", prompt)
+        self.assertNotIn("hidden failing ids", prompt)
+
+    def test_swebench_launcher_sanitizes_git_history_by_default(self) -> None:
+        source = Path("scripts/run_swebench_control_canary.py").read_text()
+        self.assertIn("git rev-list --all --count", source)
+        self.assertIn("test -z \\\"$(git remote)\\\"", source)
+        self.assertIn("git diff --binary arena-baseline", source)
 
     def test_snapshot_mounts_are_read_only_and_use_materialized_categories(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
