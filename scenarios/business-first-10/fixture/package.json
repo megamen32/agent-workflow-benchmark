@@ -1,0 +1,5 @@
+{
+  "name": "business-first-10-fixture",
+  "private": true,
+  "scripts": { "test": "node --test" }
+}

@@ -14,6 +14,9 @@ def main() -> int:
     parser.add_argument("manifest", type=Path, help="path to a YAML campaign manifest")
     parser.add_argument("--output", type=Path, default=None, help="result directory")
     parser.add_argument("--arm", action="append", dest="arms", help="run only this arm; repeatable")
+    parser.add_argument(
+        "--scenario", action="append", dest="scenarios", help="run only this scenario; repeatable"
+    )
     parser.add_argument("--limit", type=int, help="run only the first N scenarios")
     parser.add_argument("--dry-run", action="store_true", help="validate and print the execution plan")
     args = parser.parse_args()
@@ -21,6 +24,7 @@ def main() -> int:
         args.manifest,
         args.output or Path("results") / args.manifest.stem,
         arm_filter=set(args.arms) if args.arms else None,
+        scenario_filter=set(args.scenarios) if args.scenarios else None,
         scenario_limit=args.limit,
         dry_run=args.dry_run,
     )

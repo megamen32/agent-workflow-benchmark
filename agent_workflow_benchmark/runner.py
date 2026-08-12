@@ -84,6 +84,21 @@ def _prepare_workspace(scenario: dict[str, Any], base: Path, run_dir: Path) -> P
     return workspace
 
 
+def _run_setup(scenario: dict[str, Any], base: Path, workspace: Path) -> None:
+    setup = scenario.get("setup")
+    if not setup:
+        return
+    command = setup.get("command") if isinstance(setup, dict) else None
+    if not isinstance(command, list) or not command:
+        raise ValueError("scenario.setup.command must be a non-empty list")
+    argv = [str(part) for part in command]
+    if len(argv) > 1 and argv[1].startswith("../"):
+        argv[1] = str((base / argv[1]).resolve())
+    result = subprocess.run(argv, cwd=workspace, capture_output=True, text=True, check=False)
+    if result.returncode != 0:
+        raise RuntimeError(f"scenario setup failed: {redact_text(result.stderr or result.stdout)}")
+
+
 def _install_snapshot_markers(workspace: Path, snapshot_root: Path) -> None:
     """Expose only workflow marker files at the agent's isolated workspace root."""
     source_root = snapshot_root / "source"
@@ -232,6 +247,7 @@ def run_campaign(
     manifest_path: str | Path,
     output_dir: str | Path,
     arm_filter: set[str] | None = None,
+    scenario_filter: set[str] | None = None,
     scenario_limit: int | None = None,
     dry_run: bool = False,
 ) -> dict[str, Any]:
@@ -242,9 +258,16 @@ def run_campaign(
     environment = raw["environment"]
     timeout = float(environment.get("timeout_seconds", 1800))
     arms = [arm for arm in raw["arms"] if not arm_filter or arm["id"] in arm_filter]
-    scenarios = raw["scenarios"][:scenario_limit] if scenario_limit else raw["scenarios"]
+    scenarios = [
+        scenario
+        for scenario in raw["scenarios"]
+        if not scenario_filter or scenario["id"] in scenario_filter
+    ]
+    scenarios = scenarios[:scenario_limit] if scenario_limit else scenarios
     if not arms:
         raise ValueError("arm filter selected no arms")
+    if not scenarios:
+        raise ValueError("scenario filter selected no scenarios")
     if dry_run:
         return {
             "campaign": campaign["name"],
@@ -280,6 +303,7 @@ def run_campaign(
                         run_dir / "snapshot-inputs", arm.get("snapshot"), base
                     )
                     workspace = _prepare_workspace(scenario, base, run_dir)
+                    _run_setup(scenario, base, workspace)
                     _install_snapshot_markers(workspace, run_dir / "snapshot-inputs")
                     env = build_env(run_dir, arm, environment)
                     prompt = str(scenario["prompt"])

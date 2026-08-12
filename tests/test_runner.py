@@ -337,6 +337,34 @@ scenarios:
             self.assertTrue(receipt["snapshot"]["task_digest"].startswith("sha256:"))
             self.assertIn("arm", summary["snapshot_materializations"])
 
+    def test_scenario_filter_selects_exact_requested_scenario(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            manifest_path = Path(directory) / "manifest.yaml"
+            manifest_path.write_text(
+                manifest().replace(
+                    "scenarios:\n  - id: scenario\n    prompt: do it\n    acceptance:\n      command: [sh, -lc, test]",
+                    "scenarios:\n  - id: first\n    prompt: first\n    acceptance:\n      command: [sh, -lc, test]\n  - id: second\n    prompt: second\n    acceptance:\n      command: [sh, -lc, test]",
+                ),
+                encoding="utf-8",
+            )
+            result = run_campaign(
+                manifest_path,
+                Path(directory) / "out",
+                scenario_filter={"second"},
+                dry_run=True,
+            )
+            self.assertEqual(result["scenarios"], ["second"])
+
+    def test_scenario_setup_runs_inside_materialized_workspace(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            workspace = Path(directory) / "workspace"
+            workspace.mkdir()
+            scenario = {"setup": {"command": ["sh", "-lc", "printf READY > setup.marker"]}}
+            from agent_workflow_benchmark.runner import _run_setup
+
+            _run_setup(scenario, Path(directory), workspace)
+            self.assertEqual((workspace / "setup.marker").read_text(), "READY")
+
 
 def load_manifest_from_text(value: str):
     with tempfile.TemporaryDirectory() as directory:

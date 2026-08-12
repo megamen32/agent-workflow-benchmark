@@ -1,0 +1,224 @@
+manifest_version: 1
+
+campaign:
+  name: business-first-workflow-10
+  scenario_track: product_outcome
+  scenario_repetitions: 1
+  no_cross_run_memory: true
+  budget_stop_effective_cost_usd: 20.0
+  model_selection:
+    unspecified_policy: declared
+    budget_profile: matched
+  pricing:
+    preferred_basis: provider_effective_cost
+    fallback_basis: models.dev
+    snapshot_date: 2026-08-12
+    missing_or_subscription_cost: null
+
+environment:
+  timeout_seconds: 600
+  container_runtime:
+    engine: docker
+    pull_policy: never
+  inherit_env: [OPENAI_API_KEY, OPENAI_BASE_URL]
+
+arms:
+  - id: lhc-current
+    workflow_ref: lhc-business-first-current
+    source_commit: 2c29b3e
+    harness: codex
+    auth: &auth
+      host_env: CODEX_HOME
+      container_path: /auth/codex
+    adapter: &plain_adapter
+      executable: codex
+      extra_args: [--dangerously-bypass-approvals-and-sandbox]
+    container: &base_container
+      image: superpowers-evals:local
+      digest: sha256:f84f67e05d1b7bdedd12a31c01bd7ec90b7aeb1c9d32cb64e76904c51e00095e
+      image_id: sha256:f84f67e05d1b7bdedd12a31c01bd7ec90b7aeb1c9d32cb64e76904c51e00095e
+      allow_local_image_id: true
+      platform: linux/amd64
+      network: host
+    topology: &topology
+      levels:
+        - id: lead
+          roles: [lead]
+          harness: codex
+          model: gpt-5.6-luna
+      parallelism:
+        mode: sequential
+        max_concurrent_children: 1
+    snapshot:
+      source_path: ../.agents/at/lhc-current-stage
+      skills_path: null
+      inputs:
+        source:
+          - AGENTS.md
+          - CLAUDE.md
+          - common/agents/Lead.md
+          - common/agents/Worker.md
+          - common/agents/Tester.md
+          - common/agents/Reviewer.md
+          - common/agents/Critic.md
+          - common/agents/Overseer.md
+          - common/agents/Adviser.md
+          - common/profiles/Planning.md
+          - common/protocols/TIME_CONTROL.md
+          - common/protocols/WORKER_RESEARCH.md
+          - common/protocols/WORKER_IMPLEMENT.md
+          - templates/FULL_CYCLE.md
+          - templates/RELEASE_HANDOFF.md
+          - adapters/codex/adapter.yaml
+          - adapters/codex/instructions.md
+          - adapters/codex/templates/subagent.md
+          - skills/planning/SKILL.md
+          - skills/task-decomposition/SKILL.md
+          - skills/worker-research/SKILL.md
+          - skills/worker-code/SKILL.md
+          - skills/worker-bugfix/SKILL.md
+          - skills/business-delivery/SKILL.md
+        task: []
+      mounts:
+        - category: source
+          target: /home/roomhacker/.local/share/last-human-commit/current
+
+  - id: superpowers-6.2.0
+    workflow_ref: superpowers-v6.2.0
+    source_commit: 3dcbd5c4b48e02263fbf4a3c01e3fe4f81d584d9
+    harness: codex
+    auth: *auth
+    adapter:
+      command:
+        - /bin/sh
+        - -lc
+        - 'mkdir -p /workspace/.codex && cp -a /opt/workflow/. /workspace/.codex/ && exec codex exec --json --skip-git-repo-check --cd /workspace --model "$1" --dangerously-bypass-approvals-and-sandbox "$2"'
+        - benchmark-superpowers
+        - '{model}'
+        - 'Use the official $using-superpowers workflow and any relevant Superpowers skills. Then complete this task: {prompt}'
+    container:
+      image: business-first-superpowers:6.2.0
+      digest: sha256:aa915c53d38559d99ffb7c0bb6f336140478f48a649073ed0f0ee3e4744e27c3
+      image_id: sha256:aa915c53d38559d99ffb7c0bb6f336140478f48a649073ed0f0ee3e4744e27c3
+      allow_local_image_id: true
+      platform: linux/amd64
+      network: host
+    topology: *topology
+
+  - id: gsd-1.22.4
+    workflow_ref: gsd-v1.22.4
+    source_commit: 2eaed7a8475839958f9ec76ca4c26d9a0bbfc33f
+    harness: codex
+    auth: *auth
+    adapter:
+      command:
+        - /bin/sh
+        - -lc
+        - 'mkdir -p /workspace/.codex && cp -a /opt/workflow/. /workspace/.codex/ && exec codex exec --json --skip-git-repo-check --cd /workspace --model "$1" --dangerously-bypass-approvals-and-sandbox "$2"'
+        - benchmark-gsd
+        - '{model}'
+        - 'Use the official $gsd-quick workflow to complete this task end-to-end: {prompt}'
+    container:
+      image: business-first-gsd:1.22.4
+      digest: sha256:0edae9b1399305c4712d3a66a1f5cadc2a111d61d66c544840fdd79cf5775a40
+      image_id: sha256:0edae9b1399305c4712d3a66a1f5cadc2a111d61d66c544840fdd79cf5775a40
+      allow_local_image_id: true
+      platform: linux/amd64
+      network: host
+    topology: *topology
+
+  - id: codex-control
+    workflow_ref: codex-0.146.0-control
+    source_commit: codex-cli-0.146.0
+    harness: codex
+    auth: *auth
+    adapter: *plain_adapter
+    container: *base_container
+    topology: *topology
+
+scenarios:
+  - id: unknown-discount
+    fixture: ../scenarios/business-first-10/fixture
+    setup: &git_setup
+      command: [sh, ../scripts/init_business_first_fixture.sh]
+    prompt: >-
+      Fix `discountRate('BOGUS')`: an unknown discount code means no discount
+      and must return 0, while known codes must keep working. Add a runnable
+      regression test at `test/task01.test.js` and verify it.
+    acceptance: { command: [sh, -lc, "node -e 'const m=require(\"./src/contracts\");process.exit(m.discountRate(\"BOGUS\")===0&&m.discountRate(\"SAVE10\")===0.1?0:1)' && test -f test/task01.test.js && node --test test/task01.test.js"] }
+  - id: pagination-offset
+    fixture: ../scenarios/business-first-10/fixture
+    setup: *git_setup
+    prompt: >-
+      Fix `pageOffset(page, pageSize)`: pages are one-based, so page 1 starts
+      at offset 0 and page 3 with size 20 starts at 40. Add and run
+      `test/task02.test.js`.
+    acceptance: { command: [sh, -lc, "node -e 'const m=require(\"./src/contracts\");process.exit(m.pageOffset(1,20)===0&&m.pageOffset(3,20)===40?0:1)' && test -f test/task02.test.js && node --test test/task02.test.js"] }
+  - id: boolean-parser
+    fixture: ../scenarios/business-first-10/fixture
+    setup: *git_setup
+    prompt: >-
+      Fix `parseBoolean(value)` for API configuration: booleans pass through;
+      strings `true` and `false` (case-insensitive) map correctly; unsupported
+      values must not silently become true. Add and run `test/task03.test.js`.
+    acceptance: { command: [sh, -lc, "node -e 'const m=require(\"./src/contracts\");process.exit(m.parseBoolean(false)===false&&m.parseBoolean(\"FALSE\")===false&&m.parseBoolean(\"true\")===true&&m.parseBoolean(\"nope\")!==true?0:1)' && test -f test/task03.test.js && node --test test/task03.test.js"] }
+  - id: first-write-idempotency
+    fixture: ../scenarios/business-first-10/fixture
+    setup: *git_setup
+    prompt: >-
+      Fix `uniqueById(rows)` so an idempotent import keeps the first record for
+      each id and preserves first-seen order. Add and run `test/task04.test.js`.
+    acceptance: { command: [sh, -lc, "node -e 'const m=require(\"./src/contracts\");const r=m.uniqueById([{id:2,v:\"a\"},{id:1,v:\"b\"},{id:2,v:\"c\"}]);process.exit(JSON.stringify(r)===JSON.stringify([{id:2,v:\"a\"},{id:1,v:\"b\"}])?0:1)' && test -f test/task04.test.js && node --test test/task04.test.js"] }
+  - id: falsy-config-overrides
+    fixture: ../scenarios/business-first-10/fixture
+    setup: *git_setup
+    prompt: >-
+      Fix `mergeLimits(defaults, overrides)` so explicit zero values are
+      preserved while missing values still fall back to defaults. Add and run
+      `test/task05.test.js`.
+    acceptance: { command: [sh, -lc, "node -e 'const m=require(\"./src/contracts\");const r=m.mergeLimits({retries:3,timeoutMs:5000},{retries:0});process.exit(r.retries===0&&r.timeoutMs===5000?0:1)' && test -f test/task05.test.js && node --test test/task05.test.js"] }
+  - id: cache-ttl-units
+    fixture: ../scenarios/business-first-10/fixture
+    setup: *git_setup
+    prompt: >-
+      Fix `cacheExpired(createdAtMs, ttlSeconds, nowMs)`: timestamps are
+      milliseconds but TTL is seconds. A 60-second entry is fresh at 59
+      seconds and expired at 60. Add and run `test/task06.test.js`.
+    acceptance: { command: [sh, -lc, "node -e 'const m=require(\"./src/contracts\");process.exit(!m.cacheExpired(1000,60,60000)&&m.cacheExpired(1000,60,61000)?0:1)' && test -f test/task06.test.js && node --test test/task06.test.js"] }
+  - id: chunk-tail
+    fixture: ../scenarios/business-first-10/fixture
+    setup: *git_setup
+    prompt: >-
+      Fix `chunk(items, size)` so it never drops the final full or partial
+      chunk. It must also reject a non-positive size instead of looping. Add
+      and run `test/task07.test.js`.
+    acceptance: { command: [sh, -lc, "node -e 'const m=require(\"./src/contracts\");let bad=false;try{m.chunk([1],0)}catch{bad=true};process.exit(JSON.stringify(m.chunk([1,2,3,4,5],2))===JSON.stringify([[1,2],[3,4],[5]])&&bad?0:1)' && test -f test/task07.test.js && node --test test/task07.test.js"] }
+  - id: safe-divide-contract
+    fixture: ../scenarios/business-first-10/fixture
+    setup: *git_setup
+    prompt: >-
+      Fix `safeDivide(numerator, denominator)`: division by zero must return
+      `null`, not Infinity/NaN; normal division remains unchanged. Add and run
+      `test/task08.test.js`.
+    acceptance: { command: [sh, -lc, "node -e 'const m=require(\"./src/contracts\");process.exit(m.safeDivide(9,3)===3&&m.safeDivide(1,0)===null&&m.safeDivide(0,0)===null?0:1)' && test -f test/task08.test.js && node --test test/task08.test.js"] }
+  - id: canonical-email
+    fixture: ../scenarios/business-first-10/fixture
+    setup: *git_setup
+    prompt: >-
+      Fix `normalizeEmail(value)` so user identity matching is canonical across
+      surrounding whitespace and letter case. Add and run `test/task09.test.js`.
+    acceptance: { command: [sh, -lc, "node -e 'const m=require(\"./src/contracts\");process.exit(m.normalizeEmail(\"  User@Example.COM \")==\"user@example.com\"?0:1)' && test -f test/task09.test.js && node --test test/task09.test.js"] }
+  - id: quoted-csv-field
+    fixture: ../scenarios/business-first-10/fixture
+    setup: *git_setup
+    prompt: >-
+      Fix `csvFields(line)` so a quoted field may contain a comma and doubled
+      quotes decode to one quote; ordinary unquoted rows must still work. Add
+      and run `test/task10.test.js`.
+    acceptance: { command: [sh, -lc, "node -e 'const m=require(\"./src/contracts\");process.exit(JSON.stringify(m.csvFields(\"\\\"Doe, Jane\\\",42\"))===JSON.stringify([\"Doe, Jane\",\"42\"])&&JSON.stringify(m.csvFields(\"\\\"A\\\"\\\"B\\\",x\"))===JSON.stringify([\"A\\\"B\",\"x\"])?0:1)' && test -f test/task10.test.js && node --test test/task10.test.js"] }
+
+metrics:
+  primary: [pass_rate, cost_per_success_usd]
+  secondary: [wall_clock_seconds]
+  diagnostic: [input_tokens, output_tokens, total_tokens]
+  optional_aggregate: { enabled: false }
