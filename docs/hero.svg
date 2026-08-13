@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="480" viewBox="0 0 1200 480" role="img" aria-labelledby="title desc">
+  <title id="title">Agent Workflow Benchmark measurement diagram</title>
+  <desc id="desc">The same task and model route run through different workflows. The benchmark reports accepted outcome, effective cost, and wall-clock time.</desc>
+  <rect width="1200" height="480" rx="28" fill="#0b1020"/>
+  <g font-family="Arial, Helvetica, sans-serif">
+    <text x="70" y="78" fill="#f8fafc" font-size="34" font-weight="700">What we measure</text>
+    <text x="70" y="116" fill="#a5b4fc" font-size="20">Hold work and model route fixed. Vary the workflow.</text>
+    <rect x="70" y="184" width="250" height="126" rx="18" fill="#172554" stroke="#818cf8" stroke-width="2"/>
+    <text x="102" y="231" fill="#fff" font-size="25" font-weight="700">Same task</text>
+    <text x="102" y="269" fill="#c7d2fe" font-size="19">same acceptance</text>
+    <path d="M350 247H426" stroke="#94a3b8" stroke-width="4" marker-end="url(#arrow)"/>
+    <rect x="455" y="156" width="290" height="184" rx="18" fill="#1e1b4b" stroke="#a78bfa" stroke-width="2"/>
+    <text x="490" y="203" fill="#fff" font-size="25" font-weight="700">Different workflows</text>
+    <text x="490" y="242" fill="#ddd6fe" font-size="19">rules · tools · delegation</text>
+    <text x="490" y="278" fill="#ddd6fe" font-size="19">checks · stopping rules</text>
+    <path d="M777 247H852" stroke="#94a3b8" stroke-width="4" marker-end="url(#arrow)"/>
+    <rect x="880" y="138" width="250" height="220" rx="18" fill="#052e2b" stroke="#2dd4bf" stroke-width="2"/>
+    <text x="913" y="188" fill="#fff" font-size="25" font-weight="700">Report</text>
+    <text x="913" y="229" fill="#99f6e4" font-size="20">accepted outcome</text>
+    <text x="913" y="267" fill="#99f6e4" font-size="20">effective cost</text>
+    <text x="913" y="305" fill="#99f6e4" font-size="20">wall-clock time</text>
+    <text x="70" y="418" fill="#94a3b8" font-size="17">Auditable environment ≠ fixed hosted-model output.</text>
+  </g>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+</svg>
