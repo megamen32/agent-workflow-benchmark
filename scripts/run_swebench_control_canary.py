@@ -40,9 +40,13 @@ def public_prompt(instance: dict[str, object], workflow: str = "control") -> str
     )
 
 
-def instance_by_id(instance_id: str, dataset: str) -> dict[str, object]:
+def instance_by_id(instance_id: str, dataset: str, revision: str | None = None) -> dict[str, object]:
     path = Path(dataset)
-    rows = json.loads(path.read_text()) if path.is_file() else load_dataset(dataset, split="test")
+    rows = (
+        json.loads(path.read_text())
+        if path.is_file()
+        else load_dataset(dataset, split="test", revision=revision)
+    )
     for row in rows:
         if row["instance_id"] == instance_id:
             return dict(row)
@@ -88,6 +92,7 @@ def main() -> int:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--model", default="gpt-5.6-luna")
     parser.add_argument("--dataset", default=DATASET)
+    parser.add_argument("--dataset-revision")
     parser.add_argument("--image-digest")
     parser.add_argument("--preserve-git-history", action="store_true")
     parser.add_argument(
@@ -95,6 +100,9 @@ def main() -> int:
     )
     parser.add_argument("--workflow-source", type=Path)
     parser.add_argument("--timeout", type=int, default=1200)
+    parser.add_argument("--repeat", type=int, default=1)
+    parser.add_argument("--declared-topology-json", default='{"levels":[{"id":"lead"}]}')
+    parser.add_argument("--require-topology-receipt", action="store_true")
     parser.add_argument("--swebench-python", type=Path, required=True)
     parser.add_argument("--codex", type=Path, required=True)
     args = parser.parse_args()
@@ -109,7 +117,15 @@ def main() -> int:
     ):
         raise SystemExit(f"{args.workflow} requires --workflow-source")
 
-    instance = instance_by_id(args.instance_id, args.dataset)
+    if args.repeat < 1:
+        raise SystemExit("repeat must be positive")
+    try:
+        declared_topology = json.loads(args.declared_topology_json)
+    except json.JSONDecodeError as exc:
+        raise SystemExit("declared topology must be valid JSON") from exc
+    if not isinstance(declared_topology, dict) or not isinstance(declared_topology.get("levels"), list):
+        raise SystemExit("declared topology must contain levels")
+    instance = instance_by_id(args.instance_id, args.dataset, args.dataset_revision)
     image = str(instance["image"])
     base_commit = str(instance["base_commit"])
     if not re.fullmatch(r"swebench/sweb\.eval\.[a-z0-9._:-]+", image):
@@ -297,11 +313,26 @@ def main() -> int:
         "model_patch": patch,
     }
     prediction_path.write_text(json.dumps(prediction) + "\n", encoding="utf-8")
+    actual_model_invocations = [
+        {"role": "lead", "model": args.model, "source": "outer-codex-cli"}
+    ]
+    expected_levels = declared_topology["levels"]
+    topology_receipt_status = (
+        "verified"
+        if len(expected_levels) == 1
+        and expected_levels[0].get("model") in (None, args.model)
+        and not args.require_topology_receipt
+        else "missing"
+    )
     receipt = {
         "instance_id": args.instance_id,
         "image": image,
         "model": args.model,
         "workflow": args.workflow,
+        "repeat": args.repeat,
+        "declared_topology": declared_topology,
+        "actual_model_invocations": actual_model_invocations,
+        "topology_receipt_status": topology_receipt_status,
         "git_history_sanitized": not args.preserve_git_history,
         "dataset_base_commit": base_commit,
         "agent_returncode": completed.returncode,

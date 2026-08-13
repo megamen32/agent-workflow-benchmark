@@ -6,8 +6,8 @@
 
 > Same work. Different workflows. Measure accepted outcome, effective cost, and wall-clock time.
 
-Model benchmarks measure a model. This measures the delivered workflow around
-one model route: instructions, delegation, tools, checks, and stopping rules.
+Model benchmarks measure a model. This measures the delivered workflow:
+instructions, delegation, model routing, tools, checks, and stopping rules.
 It answers whether that workflow changes the requested product outcome.
 
 ## Latest verified round
@@ -38,9 +38,11 @@ LLM judge are not product success.
 
 ## Next proof
 
-The next headline campaign is **40 held-out tasks × 3 repeats × 3 model
-families × the same frozen workflows**. It will publish per-family results and
-uncertainty, not one global winner. [Roadmap](ROADMAP.md).
+The next headline campaign is **40 held-out tasks × 3 repeats × the same frozen
+workflows**. Each workflow keeps its own declared topology: it may use a
+stronger Lead, a cheaper Worker, or neither. The harness records those calls;
+missing invocation receipts invalidate that arm instead of flattening it to one
+model. [Roadmap](ROADMAP.md).
 
 ## Run locally
 

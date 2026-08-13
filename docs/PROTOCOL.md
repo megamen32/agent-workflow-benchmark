@@ -27,7 +27,8 @@ workflow invokes them.
 If the workflow has an explicit model-selection rule, use it. Otherwise use the
 best available model inside the campaign's declared budget profile and record
 that fallback. The cheap profile is a pilot, not a claim about normal-model
-production quality.
+production quality. Do not flatten a workflow's Lead, Worker, or escalation
+route to one campaign model merely to make arms look symmetric.
 
 ## Matched run
 
@@ -107,6 +108,7 @@ Every campaign records:
 - harness and version;
 - declared topology levels, role assignments, and model IDs;
 - actual child/delegation count and parallelism limit;
+- an invocation receipt for every declared model/role that actually ran;
 - optional judgement-role IDs only when those roles run;
 - scenario and fixture revisions;
 - provider route and dated pricing snapshot, without secrets;
@@ -117,6 +119,10 @@ Every campaign records:
   public release-asset URL;
 - total effective cost and cost per successful task; the latter is `null` when
   the workflow solved zero tasks;
+
+An arm that declares a multi-model topology but lacks its invocation receipts
+is infrastructure-invalid for that comparison. It is not silently reduced to a
+single-model run.
 
 ## Security boundary
 

@@ -1,0 +1,14 @@
+{
+  "cycle_id": "hard-40-repeat-prep",
+  "estimate_mutations": [],
+  "last_active_minutes": 25,
+  "last_checked_at": "2026-08-14T01:10:00+03:00",
+  "overrun_reported": false,
+  "planned_minutes": {
+    "maximum": 30,
+    "minimum": 15
+  },
+  "reported_hours": 0,
+  "schema_version": 1,
+  "started_at": "2026-08-14T00:45:00+03:00"
+}

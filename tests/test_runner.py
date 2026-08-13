@@ -11,7 +11,9 @@ from agent_workflow_benchmark.adapters.opencode import OpenCodeAdapter
 from agent_workflow_benchmark.manifest import ManifestError, load_manifest, manifest_sha256
 from agent_workflow_benchmark.redaction import redact_text
 from scripts.build_public_evidence import scrub
+from scripts.run_hard_swebench_campaign import planned_cells
 from scripts.run_swebench_control_canary import public_prompt
+from scripts.summarize_hard_swebench import summarize_task_rows
 from agent_workflow_benchmark.runner import extract_usage, run_campaign
 from agent_workflow_benchmark.snapshot import SnapshotError, materialize_snapshot, snapshot_sha256
 
@@ -49,6 +51,29 @@ scenarios:
 
 
 class RunnerContractTests(unittest.TestCase):
+    def test_hard_campaign_expands_matched_repeats_without_flattening_them(self) -> None:
+        config = {
+            "repetitions": 3,
+            "instances": [{"id": "task-a"}, {"id": "task-b"}],
+            "workflows": {"control": {}, "lhc": {}},
+        }
+        cells = planned_cells(config, Path("/tmp/arena"))
+        self.assertEqual(len(cells), 12)
+        self.assertEqual(cells[0], ("task-a", "control", 1, Path("/tmp/arena/task-a/control/repeat-1")))
+        self.assertEqual(cells[-1], ("task-b", "lhc", 3, Path("/tmp/arena/task-b/lhc/repeat-3")))
+
+    def test_hard_summary_keeps_every_repeat(self) -> None:
+        tasks = summarize_task_rows(
+            [
+                {"instance_id": "task-a", "workflow": "control", "repeat": 2, "resolved": False, "wall_clock_seconds": 2.0, "input_tokens": 20},
+                {"instance_id": "task-a", "workflow": "control", "repeat": 1, "resolved": True, "wall_clock_seconds": 1.0, "input_tokens": 10},
+                {"instance_id": "task-a", "workflow": "control", "repeat": 3, "resolved": True, "wall_clock_seconds": 3.0, "input_tokens": 30},
+            ]
+        )
+        control = tasks["task-a"]["control"]
+        self.assertEqual((control["resolved"], control["total"]), (2, 3))
+        self.assertEqual([cell["repeat"] for cell in control["repeats"]], [1, 2, 3])
+
     def test_manifest_requires_pinned_container_and_hashes_canonically(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "manifest.yaml"

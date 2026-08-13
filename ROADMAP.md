@@ -12,9 +12,10 @@
 
 - [ ] Select 40 repository tasks before the campaign; keep 30–50 as the normal minimum.
 - [ ] Make them held-out: no workflow tuning after task selection.
-- [ ] Run the same frozen workflows on 3 model families.
-- [ ] Repeat every task/workflow/model cell 3 times; randomize order.
-- [ ] Report rates, uncertainty, failures, cost, and time by model family.
+- [ ] Keep each workflow's own model topology; never flatten LHC to one route.
+- [ ] Require receipt evidence for every model/role actually invoked.
+- [ ] Repeat every task/workflow cell 3 times; randomize order.
+- [ ] Report rates, uncertainty, failures, cost, and time by workflow topology.
 
 ## Later
 
