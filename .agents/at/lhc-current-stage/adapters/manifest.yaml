@@ -1,0 +1,32 @@
+schema_version: 1
+core:
+  roles: src/common/agents
+  profiles: src/common/profiles
+  protocols: src/common/protocols
+  tools: src/common/tools
+  skills: skills
+  marker_router:
+    - AGENTS.md
+    - CLAUDE.md
+canonical_skills:
+  - name: planning
+    owner: Lead
+  - name: bugfix-tdd
+    owner: Worker
+  - name: feature-implementation
+    owner: Worker
+  - name: real-use-testing
+    owner: Tester
+  - name: business-delivery
+    owner: Lead
+  - name: release
+    owner: Lead
+adapters:
+  - adapters/codex/adapter.yaml
+  - adapters/opencode/adapter.yaml
+  - adapters/claude-code/adapter.yaml
+  - adapters/hermes/adapter.yaml
+  - adapters/zcode/adapter.yaml
+capability_contracts:
+  - src/common/capabilities/human.ask_user.v1.yaml
+  - src/common/capabilities/human.ask_secret.v1.yaml

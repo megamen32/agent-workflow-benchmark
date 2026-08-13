@@ -6,3 +6,5 @@ dist/
 graphify-out/
 *.jsonl
 .env
+.agents/at/swebench-venv/
+.agents/at/fixture-git-seed-*/

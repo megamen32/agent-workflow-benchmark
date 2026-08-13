@@ -1,0 +1,14 @@
+{
+  "cycle_id": "hard-real-repo-final",
+  "estimate_mutations": [],
+  "last_active_minutes": 0,
+  "last_checked_at": "2026-08-12T23:06:45+03:00",
+  "overrun_reported": false,
+  "planned_minutes": {
+    "maximum": 70,
+    "minimum": 25
+  },
+  "reported_hours": 3,
+  "schema_version": 1,
+  "started_at": "2026-08-12T19:20:00+03:00"
+}

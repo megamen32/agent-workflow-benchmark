@@ -1,0 +1,24 @@
+{
+  "dataset": "SWE-bench/SWE-bench_Verified",
+  "dataset_revision": "03e151cf5560b1af6a4363c6a9d766deaaea6b56",
+  "model": "gpt-5.6-sol",
+  "task_selection": "Exact model-only rerun of hard-swebench-verified-10.json; instances, images and workflow revisions are unchanged.",
+  "instances": [
+    {"id":"astropy__astropy-13398","difficulty":"1-4 hours","image_digest":"sha256:423240067cb26131788348337e59a4d51225fd491eccab99e919c1bc4d4b02e0"},
+    {"id":"pytest-dev__pytest-5787","difficulty":"1-4 hours","image_digest":"sha256:9d6e01b806ce60ae0123ece94d19de1cc543c586994460df596446922eb7e1e3"},
+    {"id":"pydata__xarray-6992","difficulty":">4 hours","image_digest":"sha256:ab8e4c77f4f3c183a9894269fe9a3c9ded0b62b52c10f5259ac19eaafd67bda3"},
+    {"id":"pylint-dev__pylint-4551","difficulty":"1-4 hours","image_digest":"sha256:70e1fceb2743ca68df6703f4d79b77e2d23db2b00b7a64ce4c6347bfe8ceefbb"},
+    {"id":"sympy__sympy-16597","difficulty":"1-4 hours","image_digest":"sha256:122f020e5faaa1b4384b2a0c6ef167736826f157e1fa5f4a8a7a3496fbd354cc"},
+    {"id":"django__django-11885","difficulty":"1-4 hours","image_digest":"sha256:64252b2d2d46913926cefad964607793d8573fb8f4c756c94624102dcd128888"},
+    {"id":"django__django-16263","difficulty":"1-4 hours","image_digest":"sha256:f6cf7b579f59272dae11c702fe9a7c9af8410668fdd853ef04d8e91fcc6a3687"},
+    {"id":"sympy__sympy-14248","difficulty":"1-4 hours","image_digest":"sha256:514cf30115cacb763755442ee4925b0e2149aa8ea54e5ecaa1d982df40c1a10a"},
+    {"id":"django__django-13344","difficulty":"1-4 hours","image_digest":"sha256:664d9630cff993a6eef75d113940909946f1fb3b8ed4c200ee7a8184de9fb3c1"},
+    {"id":"sympy__sympy-18199","difficulty":"1-4 hours","image_digest":"sha256:56688d5860ec7b91ca26cdac8ec6f0be913a40157215fc4f99561421f56c852b"}
+  ],
+  "workflows": {
+    "control": {"ref":"codex-cli-0.145.0"},
+    "lhc": {"ref":"2c29b3e","source":".agents/at/lhc-current-stage"},
+    "superpowers": {"ref":"3dcbd5c4b48e02263fbf4a3c01e3fe4f81d584d9","source":"/home/roomhacker/source_codes/superpowers"},
+    "gsd": {"ref":"2eaed7a8475839958f9ec76ca4c26d9a0bbfc33f","source":".agents/at/gsd-1.22.4-installed"}
+  }
+}
